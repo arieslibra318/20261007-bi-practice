@@ -1,0 +1,3775 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《護國神山：台積電ADR (TSM) 守衛戰》- Cyber Trading Arena</title>
+  <style>
+    :root {
+      --bg-primary: #070a10;
+      --bg-secondary: #0c111c;
+      --bg-panel: #111726;
+      --bg-card: #162035;
+      --border-color: #22304f;
+      --accent-cyan: #00f3ff;
+      --accent-gold: #ffb800;
+      --accent-purple: #a855f7;
+      --bull-red: #ff3358;   /* 經典紅漲 */
+      --bear-green: #00e676; /* 經典綠跌 */
+      --text-main: #f0f4fc;
+      --text-muted: #8496b0;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 頂部戰況欄 */
+    .top-bar {
+      background: linear-gradient(180deg, #141c2f 0%, #0a0f1b 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+      z-index: 20;
+    }
+
+    .player-profile, .boss-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.25);
+    }
+
+    .boss-profile .avatar-box {
+      border-color: var(--bull-red);
+      box-shadow: 0 0 12px rgba(255, 51, 88, 0.35);
+    }
+
+    .info-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .role-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .name-line {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fund-val {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      color: var(--accent-cyan);
+    }
+
+    .boss-fund {
+      color: var(--bull-red);
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .boss-hp-bar {
+      width: 150px;
+      height: 8px;
+      background: #25121e;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 51, 88, 0.4);
+      margin-top: 3px;
+    }
+
+    .boss-hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff3358, #ff8da1);
+      width: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .center-stage-info {
+      text-align: center;
+    }
+
+    .stock-ticker {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .stock-badge {
+      background: linear-gradient(135deg, #0052cc, #00f3ff);
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .free-vol-badge {
+      background: rgba(255, 184, 0, 0.15);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .round-timer {
+      font-size: 12px;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* 主區域 Layout */
+    .arena-container {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      flex: 1;
+      gap: 12px;
+      padding: 10px 16px;
+      position: relative;
+    }
+
+    .screen-shake {
+      animation: shakeAnim 0.38s ease-in-out;
+    }
+
+    @keyframes shakeAnim {
+      0% { transform: translate(0, 0); }
+      15% { transform: translate(-8px, 6px); }
+      30% { transform: translate(8px, -6px); }
+      45% { transform: translate(-6px, 4px); }
+      60% { transform: translate(6px, -4px); }
+      75% { transform: translate(-3px, 2px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* 左側主面板：K線戰場 */
+    .chart-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 頂部技術線多功能控制列 (仿 TradingView / Binance 專業排版) */
+    .chart-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .chart-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ticker-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .current-price {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--bull-red);
+      transition: color 0.15s;
+    }
+
+    .price-change {
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .ohlc-bar {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ohlc-bar span b {
+      color: #fff;
+    }
+
+    /* 技術指標動態切換按鈕列 */
+    .tech-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-zoom {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+
+    .zoom-btn {
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s;
+    }
+
+    .zoom-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .zoom-btn.reset:hover {
+      color: var(--accent-cyan);
+      border-color: rgba(0, 243, 255, 0.3);
+    }
+
+    .zoom-btn.live-btn {
+      background: rgba(255, 51, 88, 0.2);
+      border: 1px solid rgba(255, 51, 88, 0.5);
+      color: #ff3358;
+      animation: pulseLive 1.5s infinite;
+    }
+
+    .zoom-label {
+      font-size: 11px;
+      font-family: 'Courier New', monospace;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      padding: 0 4px;
+      user-select: none;
+    }
+
+    .timeframe-group {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .tf-btn {
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tf-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tf-btn.active {
+      color: var(--accent-cyan);
+      background: #192744;
+    }
+
+    .tech-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .tech-pill:hover {
+      border-color: rgba(0, 243, 255, 0.4);
+      color: #fff;
+    }
+
+    .tech-pill.active {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(0, 243, 255, 0.15);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      font-weight: 700;
+    }
+
+    .tech-pill.active.ema {
+      border-color: #ffd166;
+      color: #ffe082;
+      background: rgba(255, 209, 102, 0.18);
+      box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
+    }
+
+    .tech-pill.active.boll {
+      border-color: #c084fc;
+      color: #e9d5ff;
+      background: rgba(168, 85, 247, 0.22);
+      box-shadow: 0 0 14px rgba(192, 132, 252, 0.45);
+    }
+
+    .tech-pill.active.fvg {
+      border-color: var(--accent-gold);
+      color: #fef08a;
+      background: rgba(255, 184, 0, 0.18);
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.3);
+    }
+
+    .tech-pill.active.bos {
+      border-color: #38bdf8;
+      color: #bae6fd;
+      background: rgba(56, 189, 248, 0.18);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    .tech-pill.active.sr {
+      border-color: #f43f5e;
+      color: #fecdd3;
+      background: rgba(244, 63, 94, 0.18);
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+    }
+
+    /* 狀態情資微型標籤 (像截圖右上角) */
+    .status-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-bull {
+      background: rgba(255, 51, 88, 0.15);
+      border: 1px solid rgba(255, 51, 88, 0.5);
+      color: #ff3358;
+    }
+
+    .status-bear {
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid rgba(0, 230, 118, 0.5);
+      color: #00e676;
+    }
+
+    .status-rsi {
+      background: rgba(0, 243, 255, 0.12);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: var(--accent-cyan);
+    }
+
+    .status-vol {
+      background: rgba(255, 184, 0, 0.12);
+      border: 1px solid rgba(255, 184, 0, 0.4);
+      color: var(--accent-gold);
+    }
+
+    /* Canvas 容器 */
+    .canvas-wrap {
+      flex: 1;
+      min-height: 400px;
+      position: relative;
+      width: 100%;
+      background: #080c15;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 副圖指標頁籤切換 */
+    .sub-indicator-tabs {
+      position: absolute;
+      left: 12px;
+      bottom: 8px;
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+      background: rgba(11, 16, 28, 0.85);
+      backdrop-filter: blur(4px);
+      padding: 2px 4px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sub-tab-btn {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      padding: 2px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sub-tab-btn:hover {
+      color: #fff;
+    }
+
+    .sub-tab-btn.active {
+      color: var(--accent-cyan);
+      background: rgba(0, 243, 255, 0.15);
+    }
+
+    #klineCanvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* 畫布內側快捷縮放懸浮控制項 */
+    .canvas-zoom-overlay {
+      position: absolute;
+      right: 75px;
+      bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 10;
+      background: rgba(11, 16, 28, 0.88);
+      backdrop-filter: blur(4px);
+      padding: 2px 4px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .canvas-zoom-btn {
+      min-width: 24px;
+      height: 22px;
+      padding: 0 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .canvas-zoom-btn:hover {
+      background: rgba(0, 243, 255, 0.2);
+      border-color: var(--accent-cyan);
+      color: #fff;
+    }
+
+    .canvas-zoom-btn.live {
+      background: rgba(255, 51, 88, 0.25);
+      border-color: rgba(255, 51, 88, 0.6);
+      color: #ff3358;
+      animation: pulseLive 1.5s infinite;
+      font-weight: bold;
+    }
+
+    @keyframes pulseLive {
+      0% { box-shadow: 0 0 0 0 rgba(255, 51, 88, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(255, 51, 88, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 51, 88, 0); }
+    }
+
+    /* =========================================================
+       出牌影像特效 (CINEMATIC CUT-IN BANNER & 3D HOLOGRAM)
+       ========================================================= */
+    .cinematic-cutin-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease;
+    }
+
+    .cinematic-cutin-layer.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* 背景暗化與衝擊波光暈 */
+    .cutin-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.2) 0%, rgba(3, 6, 12, 0.85) 85%);
+      pointer-events: none;
+    }
+
+    /* 上方 3D 全息立體投影卡牌與大字 */
+    .cutin-holo-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateY(-10px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .cutin-action-text-3d {
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-style: italic;
+      color: #00f3ff;
+      text-shadow: 
+        0 0 10px #00f3ff,
+        0 0 25px #00f3ff,
+        0 0 45px #00f3ff,
+        2px 2px 0px #053b47,
+        4px 4px 0px #01242d;
+      margin-bottom: 6px;
+      animation: neonPulse 0.45s alternate infinite ease-in-out;
+      transform: perspective(500px) rotateX(15deg);
+    }
+
+    @keyframes neonPulse {
+      from { text-shadow: 0 0 10px #00f3ff, 0 0 25px #00f3ff, 2px 2px 0px #053b47; }
+      to { text-shadow: 0 0 20px #00f3ff, 0 0 50px #00f3ff, 0 0 80px #00f3ff, 2px 2px 0px #053b47; }
+    }
+
+    /* 3D 浮動立體卡牌 */
+    .cutin-3d-card {
+      width: 170px;
+      height: 155px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #18253f, #0d1424);
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 0 0 35px rgba(0, 243, 255, 0.7), 0 0 70px rgba(0, 243, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      text-align: center;
+      transform: perspective(600px) rotateX(18deg) scale(1.05);
+      animation: floatCard 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatCard {
+      from { transform: perspective(600px) rotateX(18deg) translateY(0px) scale(1.05); }
+      to { transform: perspective(600px) rotateX(14deg) translateY(-8px) scale(1.08); }
+    }
+
+    .cutin-3d-card .card-big-icon {
+      font-size: 42px;
+      margin-bottom: 4px;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+    }
+
+    .cutin-3d-card .card-big-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 10px #00f3ff;
+    }
+
+    /* 截圖同款：橫貫全螢幕雙雷射發光橫幅 (Full-Width Cinematic Laser Banner) */
+    .cinematic-laser-banner {
+      width: 100%;
+      position: relative;
+      background: linear-gradient(90deg, 
+        rgba(90, 8, 22, 0.96) 0%, 
+        rgba(40, 6, 12, 0.98) 35%, 
+        rgba(30, 8, 16, 0.98) 65%, 
+        rgba(90, 8, 22, 0.96) 100%);
+      backdrop-filter: blur(12px);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+      transform: scaleY(0.9);
+      transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    .cinematic-cutin-layer.active .cinematic-laser-banner {
+      transform: scaleY(1);
+    }
+
+    /* 上下高能亮紅雷射線 (Laser Beams) */
+    .laser-beam {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #ff3358;
+      box-shadow: 
+        0 0 8px #ff3358,
+        0 0 18px #ff3358,
+        0 0 35px #ff3358,
+        0 0 60px #ff3358;
+    }
+
+    .laser-top { top: 0; }
+    .laser-bottom { bottom: 0; }
+
+    /* 綠色多頭版本橫幅 */
+    .cinematic-laser-banner.bull-mode {
+      background: linear-gradient(90deg, 
+        rgba(4, 50, 30, 0.96) 0%, 
+        rgba(2, 30, 18, 0.98) 35%, 
+        rgba(2, 30, 18, 0.98) 65%, 
+        rgba(4, 50, 30, 0.96) 100%);
+    }
+
+    .cinematic-laser-banner.bull-mode .laser-beam {
+      background: #00e676;
+      box-shadow: 
+        0 0 8px #00e676,
+        0 0 18px #00e676,
+        0 0 35px #00e676,
+        0 0 60px #00e676;
+    }
+
+    .banner-body-content {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* 橫幅頭像區 (像截圖中的 Doge 3D 圖標) */
+    .banner-avatar-frame {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      background: radial-gradient(circle, #2d131f 0%, #15080e 100%);
+      border: 2px solid rgba(255, 51, 88, 0.6);
+      box-shadow: 0 0 20px rgba(255, 51, 88, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .bull-mode .banner-avatar-frame {
+      background: radial-gradient(circle, #0e3020 0%, #05180e 100%);
+      border-color: rgba(0, 230, 118, 0.6);
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+    }
+
+    .banner-text-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .banner-issuer-tag {
+      font-size: 13px;
+      font-weight: 700;
+      color: #00f3ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+      letter-spacing: 0.5px;
+    }
+
+    .banner-issuer-tag .diamond-sparkle {
+      color: #00f3ff;
+      font-size: 11px;
+    }
+
+    .banner-title-line {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .banner-main-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      line-height: 1.15;
+    }
+
+    .banner-cooldown-pill {
+      background: rgba(220, 38, 38, 0.25);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .banner-en-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .banner-location-tag {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 1px;
+    }
+
+    /* 右側情報與宏觀面板 */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* 3D 賽博旋轉地球儀容器 */
+    .globe-canvas-wrap {
+      height: 130px;
+      position: relative;
+      background: radial-gradient(circle at center, #182645 0%, #080d19 75%);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 243, 255, 0.2);
+    }
+
+    #globeCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 重大宏觀事件倒數計時器 */
+    .macro-event-box {
+      background: #0f1628;
+      border: 1px solid rgba(255, 184, 0, 0.4);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .event-info-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .event-name {
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .event-sub {
+      font-size: 10px;
+      color: var(--accent-gold);
+    }
+
+    .event-countdown-pill {
+      background: linear-gradient(135deg, #ffb800, #ff8c00);
+      color: #0b0f19;
+      font-weight: 900;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.4);
+    }
+
+    /* 即時新聞快訊跑馬燈 */
+    .news-feed {
+      height: 135px;
+      overflow-y: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .news-item {
+      font-size: 11px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-gold);
+      animation: slideIn 0.3s ease-out;
+      line-height: 1.35;
+    }
+
+    .news-item.bad {
+      border-left-color: var(--bear-green);
+    }
+
+    .news-item.bull {
+      border-left-color: var(--bull-red);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* 底部操作甲板 (Cockpit + Card Deck) */
+    .bottom-deck {
+      background: #090d16;
+      border-top: 1px solid var(--border-color);
+      padding: 10px 16px;
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 14px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+      z-index: 30;
+    }
+
+    /* 操盤操作台 */
+    .control-cockpit {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cockpit-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      font-size: 11px;
+      background: var(--bg-secondary);
+      padding: 7px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .c-stat-label {
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .c-stat-val {
+      font-size: 12px;
+      font-weight: bold;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .leverage-selector {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .lev-btn {
+      flex: 1;
+      padding: 4px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lev-btn:hover, .lev-btn.active {
+      background: #1e2c4d;
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* 動態操作控制區 (開倉 / 加碼 / 減碼) */
+    .order-actions-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .primary-trade-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .trade-btn {
+      flex: 1;
+      padding: 9px 8px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .trade-btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-long {
+      background: linear-gradient(135deg, #ff3358, #ff6b8b);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 51, 88, 0.4);
+    }
+
+    .btn-short {
+      background: linear-gradient(135deg, #00c853, #69f0ae);
+      color: #05140b;
+      box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+    }
+
+    /* 加碼與減碼按鈕專用列 */
+    .pyramid-actions-bar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      background: #0f1627;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .pyramid-btn {
+      padding: 7px 2px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      transition: all 0.15s;
+    }
+
+    .pyramid-btn:hover {
+      background: #202d4b;
+      border-color: var(--accent-cyan);
+    }
+
+    .pyramid-btn:active {
+      transform: scale(0.95);
+    }
+
+    .pyramid-btn.add-btn { color: #ff6b8b; }
+    .pyramid-btn.trim-btn { color: #ffb800; }
+    .pyramid-btn.reverse-btn { color: var(--accent-cyan); }
+    .pyramid-btn.close-btn { color: #ff3358; }
+
+    /* 卡牌手牌區 */
+    .card-deck-section {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .energy-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .energy-slots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .energy-slot {
+      width: 14px;
+      height: 18px;
+      border-radius: 3px;
+      background: #182236;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s;
+    }
+
+    .energy-slot.filled {
+      background: linear-gradient(180deg, #00f3ff, #0088cc);
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+      border-color: #00f3ff;
+    }
+
+    .hand-cards-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .skill-card {
+      width: 130px;
+      height: 145px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #151d30 0%, #0d1320 100%);
+      border: 1px solid var(--border-color);
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .skill-card:hover {
+      transform: translateY(-8px) scale(1.04);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 10px 25px rgba(0, 243, 255, 0.35);
+    }
+
+    .skill-card.cost-disabled {
+      opacity: 0.45;
+      filter: grayscale(0.7);
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .card-cost {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00f3ff, #0066cc);
+      color: #05101a;
+      font-weight: 900;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+    }
+
+    .card-icon {
+      font-size: 26px;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .card-name {
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .card-rarity {
+      font-size: 8px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      align-self: center;
+      margin-top: 2px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .rarity-common { background: #374151; color: #d1d5db; }
+    .rarity-rare { background: #1e3a8a; color: #93c5fd; }
+    .rarity-epic { background: #581c87; color: #e9d5ff; }
+    .rarity-legend { background: #78350f; color: #fde68a; border: 1px solid #f59e0b; }
+
+    .card-desc {
+      font-size: 9px;
+      color: var(--text-muted);
+      line-height: 1.25;
+      text-align: center;
+      margin-top: 3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 結算彈窗 */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #111827;
+      border: 2px solid var(--accent-cyan);
+      border-radius: 16px;
+      padding: 24px;
+      width: 440px;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(0, 243, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .modal-stats {
+      background: #1f2937;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .modal-btn {
+      padding: 12px;
+      background: linear-gradient(135deg, #00f3ff, #0066cc);
+      color: #040d1a;
+      font-weight: 900;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部戰況導航列 -->
+  <header class="top-bar">
+    <div class="player-profile">
+      <div class="avatar-box">🇹🇼</div>
+      <div class="info-col">
+        <span class="role-title">散戶多頭統帥 (YOU)</span>
+        <div class="name-line">
+          <span>本多終勝</span>
+          <span class="fund-val" id="playerFundsDisplay">NT$ 10,000,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="center-stage-info">
+      <div class="stock-ticker">
+        <span class="stock-badge">TSM</span>
+        <span>台積電ADR</span>
+        <span class="free-vol-badge">美股無漲跌限制</span>
+      </div>
+      <div class="round-timer" id="roundTimer">關卡 1：外資禿鷹決戰 ⏳ 02:30</div>
+    </div>
+
+    <div class="boss-profile">
+      <div class="info-col" style="text-align: right;">
+        <span class="role-title">華爾街空頭旗艦 (BOSS)</span>
+        <div class="name-line" style="justify-content: flex-end;">
+          <span class="boss-fund" id="bossFundsDisplay">NT$ 35,000,000</span>
+          <span>高盛量化黑石</span>
+        </div>
+        <div class="boss-hp-bar">
+          <div class="boss-hp-fill" id="bossHpFill"></div>
+        </div>
+      </div>
+      <div class="avatar-box">🦅</div>
+    </div>
+  </header>
+
+  <!-- 主戰場 -->
+  <main class="arena-container" id="arenaMain">
+    
+    <!-- 左側 K 線戰情室 -->
+    <section class="chart-panel">
+      
+      <!-- 頂部技術線多功能控制列 -->
+      <div class="chart-header">
+        
+        <div class="chart-header-top">
+          <div class="price-display">
+            <div class="ticker-title">
+              <span>TSM/USD</span>
+              <span style="font-size:11px;font-weight:700;color:var(--accent-cyan);background:#13233c;padding:1px 6px;border-radius:4px;" id="tfBadge">15m</span>
+              <span style="font-size:11px;color:var(--text-muted);">永續合約</span>
+            </div>
+            <div class="current-price" id="currentPriceDisplay">985.00</div>
+            <div class="price-change" id="priceChangeDisplay">+15.00 (+1.55%)</div>
+          </div>
+
+          <!-- 截圖同款右側即時市場狀態指標標籤 -->
+          <div class="toolbar-right">
+            <div class="status-badge status-bull" id="marketTrendBadge">▲ 多頭掌控</div>
+            <div class="status-badge status-rsi" id="rsiStatusBadge">RSI 56 均衡</div>
+            <div class="status-badge status-vol">波動 x2.4</div>
+          </div>
+        </div>
+
+        <!-- OHLC 即時數據列 -->
+        <div class="ohlc-bar" id="ohlcBar">
+          <span>開: <b id="barOpen">981.50</b></span>
+          <span>高: <b id="barHigh">986.00</b></span>
+          <span>低: <b id="barLow">980.20</b></span>
+          <span>收: <b id="barClose">985.00</b></span>
+          <span>量: <b id="barVol">74.39M</b></span>
+          <span id="barEmaGroup" style="display:inline-flex;gap:8px;align-items:center;">
+            <span>EMA7: <b id="barEma7" style="color:#ffd166;">--</b></span>
+            <span>EMA25: <b id="barEma25" style="color:#00f3ff;">--</b></span>
+            <span>MA50: <b id="barMa50" style="color:#f43f5e;">--</b></span>
+          </span>
+          <span id="barBollGroup" style="display:inline-flex;gap:6px;align-items:center;">
+            <span style="color:#c084fc;font-weight:700;">BOLL(20,2)</span>
+            <span>上: <b id="barBollUp" style="color:#c084fc;">--</b></span>
+            <span>中: <b id="barBollMid" style="color:#fbbf24;">--</b></span>
+            <span>下: <b id="barBollLow" style="color:#c084fc;">--</b></span>
+          </span>
+        </div>
+
+        <!-- 技術指標可點擊切換工具列 (Requirement 2) -->
+        <div class="tech-toolbar">
+          <div class="toolbar-left">
+            <!-- 時間週期切換 (Timeframes) -->
+            <div class="timeframe-group">
+              <button class="tf-btn active" onclick="switchTimeframe('15m')">15m</button>
+              <button class="tf-btn" onclick="switchTimeframe('1H')">1H</button>
+              <button class="tf-btn" onclick="switchTimeframe('4H')">4H</button>
+              <button class="tf-btn" onclick="switchTimeframe('1D')">1D</button>
+            </div>
+
+            <!-- 主圖技術分析開關 (Clickable Indicator Toggles) -->
+            <button class="tech-pill active ema" id="toggleEMA" onclick="toggleIndicator('ma')">
+              <span>📈</span> 均線 (EMA 7/25/50)
+            </button>
+            <button class="tech-pill active boll" id="toggleBOLL" onclick="toggleIndicator('boll')">
+              <span>🌊</span> 布林帶 (BOLL 20,2)
+            </button>
+            <button class="tech-pill active fvg" id="toggleFVG" onclick="toggleIndicator('fvg')">
+              <span>🧲</span> FVG 缺口
+            </button>
+            <button class="tech-pill active bos" id="toggleBOS" onclick="toggleIndicator('bos')">
+              <span>⚡</span> BOS/MSS
+            </button>
+            <button class="tech-pill active sr" id="toggleSR" onclick="toggleIndicator('sr')">
+              <span>🎯</span> 支撐壓力
+            </button>
+          </div>
+
+          <!-- 右側縮放控制 (Zoom In / Zoom Out Controls) -->
+          <div class="toolbar-zoom">
+            <button class="zoom-btn" onclick="zoomChart('in')" title="放大視角 (或在圖表滑動滾輪向上)">
+              <span>🔍+</span> 放大
+            </button>
+            <span class="zoom-label" id="zoomLevelDisplay">42 根 (100%)</span>
+            <button class="zoom-btn" onclick="zoomChart('out')" title="縮小視角 (或在圖表滑動滾輪向下)">
+              <span>🔍-</span> 縮小
+            </button>
+            <button class="zoom-btn reset" onclick="zoomChart('reset')" title="重設 1:1 縮放比例">
+              <span>↺</span> 預設
+            </button>
+            <button class="zoom-btn live-btn" id="btnLiveFollow" onclick="resetPanToLive()" style="display:none;" title="回到最新即時 K 線">
+              <span>⏩</span> 回到即時
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- K 線主畫布 (Canvas) -->
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="klineCanvas"></canvas>
+
+        <!-- 副圖指標分頁標籤 (Volume / MACD / RSI) -->
+        <div class="sub-indicator-tabs">
+          <button class="sub-tab-btn active" id="subTabVol" onclick="switchSubChart('vol')">成交量 (VOL)</button>
+          <button class="sub-tab-btn" id="subTabMacd" onclick="switchSubChart('macd')">MACD (12,26,9)</button>
+          <button class="sub-tab-btn" id="subTabRsi" onclick="switchSubChart('rsi')">RSI (14)</button>
+        </div>
+
+        <!-- 畫布右下角快捷浮動縮放按鈕群 (Quick Floating Zoom Overlay) -->
+        <div class="canvas-zoom-overlay">
+          <button class="canvas-zoom-btn" onclick="zoomChart('in')" title="放大 (滾輪向前)">＋</button>
+          <button class="canvas-zoom-btn" onclick="zoomChart('reset')" title="重設縮放 (1:1)">1:1</button>
+          <button class="canvas-zoom-btn" onclick="zoomChart('out')" title="縮小 (滾輪向後)">－</button>
+          <button class="canvas-zoom-btn live" id="canvasLiveBtn" onclick="resetPanToLive()" style="display:none;" title="回到最新實時 K 線">LIVE ⏩</button>
+        </div>
+
+        <!-- 截圖同款出牌影像特效層 (Cinematic Cut-In Layer) -->
+        <div class="cinematic-cutin-layer" id="cinematicCutIn">
+          <div class="cutin-vignette"></div>
+
+          <!-- 上方 3D 全息投影卡牌與大字 -->
+          <div class="cutin-holo-stage" id="cutinHoloStage">
+            <div class="cutin-action-text-3d" id="cutinActionText">多頭突擊!!</div>
+            <div class="cutin-3d-card" id="cutin3dCard">
+              <div class="card-big-icon" id="cutinCardIcon">🐶</div>
+              <div class="card-big-name" id="cutinCardName">馬斯克推文</div>
+            </div>
+          </div>
+
+          <!-- 橫貫全螢幕雙雷射發光橫幅 (Matching Screenshot!) -->
+          <div class="cinematic-laser-banner" id="cinematicLaserBanner">
+            <div class="laser-beam laser-top"></div>
+            <div class="banner-body-content">
+              
+              <!-- 3D Avatar Box (像截圖中的 Doge 頭像) -->
+              <div class="banner-avatar-frame">
+                <div id="bannerAvatar">🐶</div>
+              </div>
+
+              <!-- 右側文字群 -->
+              <div class="banner-text-group">
+                <div class="banner-issuer-tag" id="bannerIssuer">
+                  <span class="diamond-sparkle">◆</span> 莊家發動了世界層級
+                </div>
+                <div class="banner-title-line">
+                  <h1 class="banner-main-title" id="bannerMainTitle">馬斯克推文</h1>
+                  <div class="banner-cooldown-pill" id="bannerCooldownPill">
+                    <span>●</span> 冷卻中
+                  </div>
+                </div>
+                <div class="banner-en-title" id="bannerEnTitle">ELON TWEETS</div>
+                <div class="banner-location-tag" id="bannerLocationTag">
+                  <span>📍</span> 德州奧斯汀 · Austin
+                </div>
+              </div>
+
+            </div>
+            <div class="laser-beam laser-bottom"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 右側 宏觀與情報面板 (含 3D 旋轉地球儀與事件倒數) -->
+    <aside class="side-panel">
+      
+      <!-- 宏觀重大事件即時倒數環 (Macro Event Countdown) -->
+      <div class="macro-event-box" id="macroEventBox">
+        <div class="event-info-text">
+          <span class="event-name" id="macroEventName">台積電ADR (TSM) 季度法說會開獎</span>
+          <span class="event-sub" id="macroEventDesc">毛利率與 2nm 先進製程進度公佈</span>
+        </div>
+        <div class="event-countdown-pill" id="macroEventTimer">⏳ 28s</div>
+      </div>
+
+      <!-- 3D 賽博旋轉地球儀 / 供應鏈雷達 -->
+      <div class="info-card">
+        <div class="card-title">
+          <span>🌐 全球晶圓供應鏈 3D 雷達</span>
+          <span style="font-size:10px;color:var(--accent-gold);">FAB STATUS</span>
+        </div>
+        <div class="globe-canvas-wrap">
+          <canvas id="globeCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- 市場即時情報跑馬燈 -->
+      <div class="info-card" style="flex: 1;">
+        <div class="card-title">
+          <span>⚡ 即時情報電報</span>
+          <span style="font-size:10px;color:var(--accent-cyan);">LIVE FEED</span>
+        </div>
+        <div class="news-feed" id="newsFeed">
+          <div class="news-item">【開盤快訊】美股紐約證交所開盤，台積電ADR (TSM) 盤前暴動，無漲跌幅限制自由博弈！</div>
+          <div class="news-item bull">【訂單消息】美系 CSP 雲端大廠持續上修輝達 Blackwell 晶片投片量。</div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- 底部操作甲板 (交易終端 + 卡牌) -->
+  <footer class="bottom-deck">
+    
+    <!-- 交易操盤台 -->
+    <div class="control-cockpit">
+      <div class="cockpit-stats">
+        <div>
+          <div class="c-stat-label">當前持倉 (股)</div>
+          <div class="c-stat-val" id="posUnitsVal" style="color:var(--text-main);">無部位 (0)</div>
+        </div>
+        <div>
+          <div class="c-stat-label">持倉均價</div>
+          <div class="c-stat-val" id="posEntryVal">--</div>
+        </div>
+        <div>
+          <div class="c-stat-label">未實現損益</div>
+          <div class="c-stat-val" id="posPnlVal">NT$ 0</div>
+        </div>
+        <div>
+          <div class="c-stat-label">爆倉清算價</div>
+          <div class="c-stat-val" id="posLiqVal" style="color:#ff0033;">--</div>
+        </div>
+      </div>
+
+      <!-- 槓桿倍數 -->
+      <div class="leverage-selector">
+        <span style="font-size:10px;color:var(--text-muted);font-weight:bold;">槓桿：</span>
+        <button class="lev-btn active" onclick="setLeverage(1, this)">1x</button>
+        <button class="lev-btn" onclick="setLeverage(2, this)">2x</button>
+        <button class="lev-btn" onclick="setLeverage(5, this)">5x</button>
+        <button class="lev-btn" onclick="setLeverage(10, this)">10x</button>
+        <button class="lev-btn" onclick="setLeverage(20, this)">20x</button>
+      </div>
+
+      <!-- 操作按鈕群 -->
+      <div class="order-actions-wrap">
+        <div class="primary-trade-btns" id="noPosActions">
+          <button class="trade-btn btn-long" onclick="openPosition('LONG')">
+            <span>▲ 做多買進 (LONG)</span>
+            <span style="font-size:10px;opacity:0.85;font-weight:normal;">動用 35% 資金搶進</span>
+          </button>
+          <button class="trade-btn btn-short" onclick="openPosition('SHORT')">
+            <span>▼ 融券做空 (SHORT)</span>
+            <span style="font-size:10px;opacity:0.85;font-weight:normal;">看空放空外資禿鷹</span>
+          </button>
+        </div>
+
+        <div class="pyramid-actions-bar" id="posActiveActions" style="display: none;">
+          <button class="pyramid-btn add-btn" onclick="addPosition(1000)">
+            <span>➕ 加碼</span>
+            <span style="font-size:9px;color:var(--text-muted);">+1,000股</span>
+          </button>
+          <button class="pyramid-btn add-btn" onclick="addPosition(3000)">
+            <span>🚀 暴加</span>
+            <span style="font-size:9px;color:var(--text-muted);">+3,000股</span>
+          </button>
+          <button class="pyramid-btn trim-btn" onclick="trimPosition(0.5)">
+            <span>✂️ 減碼半數</span>
+            <span style="font-size:9px;color:var(--text-muted);">獲利落袋50%</span>
+          </button>
+          <button class="pyramid-btn reverse-btn" onclick="reversePosition()">
+            <span>🔄 反手翻倉</span>
+            <span style="font-size:9px;color:var(--text-muted);">多空順勢切換</span>
+          </button>
+          <button class="pyramid-btn close-btn" onclick="closePosition()">
+            <span>🛑 全數平倉</span>
+            <span style="font-size:9px;color:var(--text-muted);">即刻鎖定損益</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技能卡牌手牌槽 -->
+    <div class="card-deck-section">
+      <div class="deck-header">
+        <div style="font-size:11px;font-weight:bold;color:var(--accent-cyan);display:flex;align-items:center;gap:6px;">
+          <span>🎴 戰略手牌 (CARDS)</span>
+          <span style="font-size:10px;color:var(--text-muted);">點擊出牌觸發全螢幕世界級震撼特效！</span>
+        </div>
+        <div class="energy-bar-wrap">
+          <span style="font-size:10px;color:var(--accent-cyan);font-weight:bold;">⚡ 能量: <span id="energyNum">5/10</span></span>
+          <div class="energy-slots" id="energySlots"></div>
+        </div>
+      </div>
+
+      <div class="hand-cards-row" id="handCards">
+        <!-- 動態渲染卡牌 -->
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- 結算彈窗 -->
+  <div class="modal-backdrop" id="gameModal">
+    <div class="modal-box">
+      <div style="font-size:52px;" id="modalEmoji">🎉</div>
+      <div class="modal-title" id="modalTitle">大獲全勝！守護成功！</div>
+      <p id="modalDesc" style="font-size:13px;color:var(--text-muted);line-height:1.4;">
+        你成功擊潰了華爾街空頭禿鷹！台積電 ADR (TSM) 守住護國神山地位！
+      </p>
+      <div class="modal-stats">
+        <div style="display:flex;justify-content:space-between;">
+          <span>最終結算資金：</span>
+          <span id="finalPlayerFunds" style="color:var(--accent-cyan);font-weight:bold;">NT$ 0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span>對手剩餘資金：</span>
+          <span id="finalBossFunds" style="color:var(--bull-red);font-weight:bold;">NT$ 0</span>
+        </div>
+      </div>
+      <button class="modal-btn" onclick="location.reload()">再戰一回 (RESTART)</button>
+    </div>
+  </div>
+
+  <!-- 遊戲核心邏輯 JavaScript -->
+  <script>
+    /* =========================================================
+       1. 音效合成器 (WEB AUDIO API SYNTHESIZER)
+       ========================================================= */
+    const SFX = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playTone(freq, type = 'sine', duration = 0.15, gainLevel = 0.15) {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainLevel, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      },
+      click() { this.playTone(800, 'sine', 0.05, 0.08); },
+      buy() { this.playTone(587.33, 'triangle', 0.18, 0.2); },
+      sell() { this.playTone(329.63, 'sawtooth', 0.18, 0.18); },
+      cash() {
+        this.playTone(987.77, 'sine', 0.1, 0.2);
+        setTimeout(() => this.playTone(1318.51, 'sine', 0.2, 0.2), 80);
+      },
+      pump() {
+        this.playTone(440, 'triangle', 0.08, 0.25);
+        setTimeout(() => this.playTone(659.25, 'triangle', 0.08, 0.25), 70);
+        setTimeout(() => this.playTone(880, 'sine', 0.25, 0.3), 140);
+      },
+      dump() {
+        this.playTone(600, 'sawtooth', 0.1, 0.25);
+        setTimeout(() => this.playTone(400, 'sawtooth', 0.12, 0.25), 80);
+        setTimeout(() => this.playTone(250, 'sawtooth', 0.25, 0.3), 160);
+      },
+      squeeze() {
+        this.playTone(350, 'square', 0.1, 0.3);
+        setTimeout(() => this.playTone(700, 'square', 0.15, 0.35), 90);
+        setTimeout(() => this.playTone(1050, 'sine', 0.35, 0.4), 180);
+      },
+      liquidate() {
+        this.playTone(200, 'sawtooth', 0.3, 0.4);
+        setTimeout(() => this.playTone(120, 'square', 0.45, 0.45), 150);
+      },
+      victory() {
+        [523, 659, 783, 1046].forEach((f, i) => {
+          setTimeout(() => this.playTone(f, 'triangle', 0.3, 0.25), i * 120);
+        });
+      },
+      cinematicHit() {
+        this.playTone(120, 'sawtooth', 0.35, 0.45);
+        setTimeout(() => this.playTone(520, 'square', 0.25, 0.3), 80);
+        setTimeout(() => this.playTone(1040, 'triangle', 0.45, 0.35), 180);
+      }
+    };
+
+    /* =========================================================
+       2. 遊戲核心狀態 (GAME STATE)
+       ========================================================= */
+    const GAME = {
+      stage: 1,
+      playerFunds: 10000000, // 初始 1,000 萬新台幣
+      bossFunds: 35000000,   // 第一關外資資金池 3,500 萬
+      bossMaxFunds: 35000000,
+      currentPrice: 985.0,   // 每股價格 (無漲跌幅限制)
+      prevClose: 970.0,
+      timeLeft: 150,
+      energy: 5,
+      maxEnergy: 10,
+      leverage: 1.0,
+      position: null,        // { type: 'LONG'|'SHORT', entryPrice: 0, units: 0, marginUsed: 0, leverage: 1, liqPrice: 0 }
+      shieldActive: false,
+      speedBoostUntil: 0,
+      candleHistory: [],
+      visibleCandles: 42,
+      minVisibleCandles: 14,
+      maxVisibleCandles: 120,
+      viewOffset: 0,
+      hand: [],
+      particles: [],
+      shockwaves: [],
+      floatingCombatTexts: [],
+      coinsRain: [],
+      macroEventTime: 28,
+      macroEventIndex: 0,
+
+      // 技術分析切換狀態 (Requirement 2)
+      timeframe: '15m',
+      indicators: {
+        ma: true,     // EMA 7, 25, 50, 99
+        boll: true,   // 布林帶
+        fvg: true,    // 價值缺口
+        bos: true,    // BOS / MSS 結構轉折
+        sr: true      // 關鍵支撐壓力線
+      },
+      subChartMode: 'vol', // 'vol' | 'macd' | 'rsi'
+      crosshair: { x: -1, y: -1, active: false }
+    };
+
+    /* 宏觀重大事件序列 */
+    const MACRO_EVENTS = [
+      { 
+        name: '台積電ADR (TSM) 季度法說會開獎', 
+        en: 'EARNINGS CALL RELEASE',
+        issuer: '◆ 華爾街主力發動了季度財報審判',
+        location: '📍 台灣新竹科學園區 · Hsinchu',
+        avatar: '📊',
+        desc: '公佈毛利率與 2nm 進度', 
+        impact: () => triggerEarningsCall() 
+      },
+      { 
+        name: '輝達 GTC 大會主題演講', 
+        en: 'JENSEN GTC KEYNOTE',
+        issuer: '◆ 輝達總部發佈了全球算力指令',
+        location: '📍 加州聖塔克拉拉 · Santa Clara',
+        avatar: '🧥',
+        desc: '黃仁勳宣佈 AI 晶片急單擴充', 
+        impact: () => triggerJensenKeynote() 
+      },
+      { 
+        name: '美國聯準會利率決策公佈', 
+        en: 'FED RATE CUT ANNOUNCEMENT',
+        issuer: '◆ 華盛頓聯準會啟動了流動性狂潮',
+        location: '📍 華盛頓特區 · Washington D.C.',
+        avatar: '🏛️',
+        desc: '降息引發全球科技股流動性噴發', 
+        impact: () => triggerFedRateCut() 
+      },
+      { 
+        name: '美商務部晶片法案聽證會', 
+        en: 'CHIPS ACT HEARING & PROBE',
+        issuer: '◆ 空頭大鱷發動了地緣監管突襲',
+        location: '📍 美國國會山莊 · Capitol Hill',
+        avatar: '🦅',
+        desc: '地緣政治消息引發空頭突襲', 
+        impact: () => triggerGeopoliticsDip() 
+      }
+    ];
+
+    /* 技能卡牌庫定義 (包含截圖同款馬斯克推文、黃仁勳急單等) */
+    const CARD_LIBRARY = [
+      {
+        id: 'elon_tweets',
+        name: '馬斯克推文',
+        enTitle: 'ELON TWEETS',
+        issuer: '◆ 莊家發動了世界層級推文',
+        location: '📍 德州奧斯汀 · Austin',
+        actionTag: '暴拉狂飆!!',
+        icon: '🐶',
+        cost: 3,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '「Doge to the Moon!」馬斯克突發推文引爆全市場投機狂潮，爆拉每股 +20~40 元！',
+        color: '#ff3358',
+        action: () => {
+          const pump = Math.floor(Math.random() * 21) + 20;
+          injectTick(pump);
+          damageBoss(8000000);
+          spawnVfxExplosion('🐶 馬斯克推文', `+${pump}.0 元`, '#ff3358');
+          spawnCoinsRain(35);
+          SFX.pump();
+          addNews(`【推特暴動】馬斯克發布柴犬戴晶圓頭盔自拍，市場狂熱情緒噴發！股價暴衝 +${pump} 元！`, 'bull');
+        }
+      },
+      {
+        id: 'jensen_order',
+        name: '黃仁勳 AI 急單',
+        enTitle: 'JENSEN HUANG AI SURGE',
+        issuer: '◆ 輝達總部發佈了超級投片指令',
+        location: '📍 加州聖塔克拉拉 · Santa Clara',
+        actionTag: '多頭突擊!!',
+        icon: '🧥',
+        cost: 3,
+        rarity: 'epic',
+        rarityName: '史詩 (EPIC)',
+        desc: '「In Jensen We Trust!」灌入 2,000 萬股大買盤，每股飆漲 +18~35 元，無漲跌限制！',
+        color: '#ffb800',
+        action: () => {
+          const pump = Math.floor(Math.random() * 18) + 18;
+          injectTick(pump);
+          damageBoss(7000000);
+          spawnVfxExplosion('🧥 黃仁勳急單', `+${pump}.0 元`, '#00f3ff');
+          spawnCoinsRain(30);
+          SFX.pump();
+          addNews(`【重磅急單】黃仁勳在矽谷展示全新 GPU，追加台積電ADR (TSM) 2,000 萬股投片！股價飆漲 +${pump} 元！`, 'bull');
+        }
+      },
+      {
+        id: 'w_bottom',
+        name: 'W 底突破型態',
+        enTitle: 'DOUBLE BOTTOM BREAKOUT',
+        issuer: '◆ 華爾街技術派發動了頸線突破',
+        location: '📍 紐約華爾街 · Wall Street',
+        actionTag: '技術突破!!',
+        icon: '📈',
+        cost: 3,
+        rarity: 'epic',
+        rarityName: '史詩 (EPIC)',
+        desc: '技術面雙底成形！畫面上勾勒 W 底連線，突破頸線引發技術性買盤大噴出！',
+        color: '#ffd166',
+        action: () => {
+          GAME.doubleBottomActive = true;
+          setTimeout(() => { GAME.doubleBottomActive = false; }, 12000);
+          injectTick(15);
+          damageBoss(4000000);
+          spawnVfxExplosion('📈 W 底突破', '技術突破頸線', '#ffd166');
+          SFX.pump();
+          addNews('【技術突破】台積電ADR (TSM) 每股 K 線強勢打出標準雙底（W 底），突破頸線大暴漲！', 'bull');
+        }
+      },
+      {
+        id: 'buffett_buy',
+        name: '巴菲特神秘建倉',
+        enTitle: 'BUFFETT ACCUMULATION',
+        issuer: '◆ 奧馬哈先知揭露了重磅持倉',
+        location: '📍 內布拉斯加奧馬哈 · Omaha',
+        actionTag: '價值回歸!!',
+        icon: '💎',
+        cost: 4,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '波克夏申報 13F 報告！大舉建倉台積電 ADR，全球主權基金全面追價 +25 元！',
+        color: '#00f3ff',
+        action: () => {
+          injectTick(25);
+          damageBoss(6500000);
+          spawnVfxExplosion('💎 巴菲特建倉', '+25.0 元', '#00f3ff');
+          spawnCoinsRain(40);
+          SFX.pump();
+          addNews('【重磅持倉】波克夏公布最新持股，台積電重回核心持股，空頭主力嚇破膽瘋狂回補！', 'bull');
+        }
+      },
+      {
+        id: 'national_fund',
+        name: '國安基金進場',
+        enTitle: 'NATIONAL DEFENSE FUND',
+        issuer: '◆ 八大公股行庫啟動了無敵托底',
+        location: '📍 台北重慶南路 · Taipei',
+        actionTag: '護國神山!!',
+        icon: '🛡️',
+        cost: 4,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '召喚國家隊護盤！開啟 15 秒跌幅防護罩，急跌自動湧入萬股托底！',
+        color: '#ff4d6d',
+        action: () => {
+          GAME.shieldActive = true;
+          setTimeout(() => { GAME.shieldActive = false; }, 15000);
+          spawnVfxExplosion('🛡️ 國安基金護盤', '無敵托底 15 秒', '#ff3358');
+          SFX.pump();
+          addNews('【盤中動態】八大公股行庫聯手進場護盤，買單高掛五檔，空方難越雷池一步！', 'bull');
+        }
+      },
+      {
+        id: 'morris_speech',
+        name: '張忠謀大師精神',
+        enTitle: 'MORRIS CHANG SPEECH',
+        issuer: '◆ 半導體教父發表了世紀宣言',
+        location: '📍 新竹科學園區 · Hsinchu',
+        actionTag: '無可取代!!',
+        icon: '🎙️',
+        cost: 3,
+        rarity: 'epic',
+        rarityName: '史詩 (EPIC)',
+        desc: '「全球化已死，但台積電無可取代！」15 秒內多頭推力 +100%！',
+        color: '#ffb800',
+        action: () => {
+          GAME.speedBoostUntil = Date.now() + 15000;
+          spawnVfxExplosion('🎙️ 張忠謀心法', '多頭推力 +100%', '#ffd166');
+          SFX.pump();
+          addNews('【外電專訪】張忠謀指出台積電技術領先三星與Intel至少三代，市場信心全面引爆！', 'bull');
+        }
+      },
+      {
+        id: 'cowos_expansion',
+        name: 'CoWoS 產能全開',
+        enTitle: 'COWOS PACKAGING SURGE',
+        issuer: '◆ 先進封裝廠啟動了翻倍量產',
+        location: '📍 台中中科晶圓廠 · Taichung',
+        actionTag: '產能翻倍!!',
+        icon: '⚡',
+        cost: 2,
+        rarity: 'rare',
+        rarityName: '稀有 (RARE)',
+        desc: '先進封裝產能月月翻倍！每秒持續推升每股 3.0 元，持續 8 秒。',
+        color: '#a855f7',
+        action: () => {
+          spawnVfxExplosion('⚡ CoWoS 擴產', '8秒連續推升', '#a855f7');
+          SFX.pump();
+          let count = 0;
+          const timer = setInterval(() => {
+            injectTick(3.0);
+            damageBoss(600000);
+            count++;
+            if (count >= 8) clearInterval(timer);
+          }, 1000);
+          addNews('【產業快訊】台積電先進封裝產能全線滿載，CoWoS 供不應求推升獲利預期！', 'bull');
+        }
+      },
+      {
+        id: 'short_squeeze',
+        name: '外資認錯回補',
+        enTitle: 'MASSIVE SHORT SQUEEZE',
+        issuer: '◆ 華爾街量化觸發了連環砍倉',
+        location: '📍 紐約高盛交易室 · New York',
+        actionTag: '連環軋空!!',
+        icon: '💥',
+        cost: 4,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '空頭融券大踩踏！對手直接扣除 22% 資金池，並瞬間噴出長紅！',
+        color: '#ff4d6d',
+        action: () => {
+          const dmg = Math.round(GAME.bossFunds * 0.22);
+          damageBoss(dmg);
+          injectTick(25);
+          spawnVfxExplosion('💥 外資融券斷頭', `-NT$ ${(dmg/10000).toFixed(0)}萬`, '#ff0033');
+          spawnCoinsRain(45);
+          SFX.squeeze();
+          addNews(`【籌碼大戰】外資做空部位遭無情軋空，盤中觸發券商強制砍倉，直接噴出 +25 元！`, 'bull');
+        }
+      },
+      {
+        id: 'fvg_magnet',
+        name: 'FVG 缺口磁吸',
+        enTitle: 'FAIR VALUE GAP MAGNET',
+        issuer: '◆ 演算法大單啟動了缺口回補',
+        location: '📍 芝加哥商業交易所 · Chicago',
+        actionTag: '跳空回補!!',
+        icon: '🧲',
+        cost: 2,
+        rarity: 'common',
+        rarityName: '普通 (COMMON)',
+        desc: '技術面仙人指路！觸發上方未補跳空缺口引力，迅速向上回補 12 元。',
+        color: '#00f3ff',
+        action: () => {
+          injectTick(12);
+          damageBoss(2000000);
+          spawnVfxExplosion('🧲 缺口引力回補', '+12.0 元', '#00f3ff');
+          SFX.pump();
+          addNews('【技術分析】台積電跳空回補前波 FVG 價值缺口，空頭防線全面瓦解！', 'bull');
+        }
+      },
+      {
+        id: 'insurance_shield',
+        name: '止損保險救援',
+        enTitle: 'STOP-LOSS INSURANCE',
+        issuer: '◆ 國際再保集團啟動了緊急賠付',
+        location: '📍 瑞士蘇黎世 · Zurich',
+        actionTag: '緊急救援!!',
+        icon: '🛡️',
+        cost: 2,
+        rarity: 'rare',
+        rarityName: '稀有 (RARE)',
+        desc: '緊急救命卡！若當前部位虧損，立即攔截 70% 虧損並補回保證金！',
+        color: '#00e676',
+        action: () => {
+          if (GAME.position) {
+            const p = GAME.position;
+            const priceDiff = GAME.currentPrice - p.entryPrice;
+            const pnl = (p.type === 'LONG' ? priceDiff : -priceDiff) * p.units;
+            if (pnl < 0) {
+              const saved = Math.abs(pnl) * 0.7;
+              GAME.playerFunds += Math.round(saved);
+              spawnVfxExplosion('🛡️ 保險救援', `挽回 70% 虧損`, '#00e676');
+              SFX.victory();
+              addNews(`【保險救援成功】止損保險機制生效，攔截虧損 NT$ ${Math.round(saved).toLocaleString()}！`, 'bull');
+            }
+          }
+        }
+      }
+    ];
+
+    /* =========================================================
+       3. 歷史 K 線與即時仿真跳動產生器 (REALISTIC K-LINE ENGINE)
+       ========================================================= */
+    function initCandles() {
+      GAME.candleHistory = [];
+      let basePrice = 965.0;
+      const now = Date.now();
+      const intervalSec = getIntervalSeconds();
+
+      for (let i = 0; i < 150; i++) {
+        const delta = (Math.random() - 0.46) * 4.8;
+        const open = basePrice;
+        const close = +(basePrice + delta).toFixed(2);
+        const high = +(Math.max(open, close) + Math.random() * 2.8).toFixed(2);
+        const low = +(Math.min(open, close) - Math.random() * 2.8).toFixed(2);
+        const volume = Math.floor(Math.random() * 6500) + 1500;
+        const time = new Date(now - (150 - i) * intervalSec * 1000);
+        GAME.candleHistory.push({ open, high, low, close, volume, timestamp: time });
+        basePrice = close;
+      }
+      GAME.currentPrice = basePrice;
+      GAME.prevClose = +(basePrice - 2.5).toFixed(2);
+      GAME.viewOffset = 0;
+
+      // 預設 FVG 區間
+      GAME.fvgBoxes = [
+        { top: basePrice + 14.5, bottom: basePrice + 7.5, type: 'BULL' }
+      ];
+      updateZoomUI();
+    }
+
+    function getIntervalSeconds() {
+      switch (GAME.timeframe) {
+        case '15m': return 900;
+        case '1H': return 3600;
+        case '4H': return 14400;
+        case '1D': return 86400;
+        default: return 900;
+      }
+    }
+
+    // 微型真實跳動 (Real-time live tick simulation)
+    function tickSimulation() {
+      if (GAME.candleHistory.length === 0) return;
+      const curCandle = GAME.candleHistory[GAME.candleHistory.length - 1];
+
+      // 宏觀 / 加速狀態推力
+      let drift = 0;
+      if (GAME.speedBoostUntil > Date.now()) drift += 0.35;
+      if (GAME.shieldActive && (curCandle.close < GAME.currentPrice)) drift += 0.4;
+
+      // 布朗運動隨機跳動
+      const tickDelta = (Math.random() - 0.485 + drift) * 0.45;
+      const newPrice = +(GAME.currentPrice + tickDelta).toFixed(2);
+      GAME.currentPrice = Math.max(10.0, newPrice);
+
+      // 更新當前 K 線的高低收
+      curCandle.close = GAME.currentPrice;
+      if (GAME.currentPrice > curCandle.high) curCandle.high = GAME.currentPrice;
+      if (GAME.currentPrice < curCandle.low) curCandle.low = GAME.currentPrice;
+      curCandle.volume += Math.floor(Math.random() * 25) + 5;
+
+      checkPositions();
+      updateUI();
+    }
+
+    // 每 2.8 秒封裝一根完整 K 棒並開啟新柱
+    setInterval(() => {
+      if (GAME.candleHistory.length === 0) return;
+      const last = GAME.candleHistory[GAME.candleHistory.length - 1];
+      const now = new Date();
+      GAME.candleHistory.push({
+        open: last.close,
+        high: last.close,
+        low: last.close,
+        close: last.close,
+        volume: 50,
+        timestamp: now
+      });
+      if (GAME.candleHistory.length > 220) {
+        GAME.candleHistory.shift();
+      }
+    }, 2800);
+
+    // 每 150ms 產生一次即時微幅脈動跳價
+    setInterval(tickSimulation, 150);
+
+    // 注入大單爆拉/崩跌 (Card Actions)
+    function injectTick(delta) {
+      GAME.currentPrice = +(GAME.currentPrice + delta).toFixed(2);
+      const curCandle = GAME.candleHistory[GAME.candleHistory.length - 1];
+      if (curCandle) {
+        curCandle.close = GAME.currentPrice;
+        if (GAME.currentPrice > curCandle.high) curCandle.high = GAME.currentPrice;
+        if (GAME.currentPrice < curCandle.low) curCandle.low = GAME.currentPrice;
+        curCandle.volume += Math.floor(Math.abs(delta) * 800);
+      }
+      updateUI();
+    }
+
+    /* =========================================================
+       4. 技術指標計算庫 (EMA, BOLL, RSI, MACD, BOS)
+       ========================================================= */
+    function calcEMA(candles, period) {
+      const k = 2 / (period + 1);
+      const emaArr = [];
+      let prevEma = candles[0] ? candles[0].close : 0;
+      candles.forEach((c, i) => {
+        if (i === 0) {
+          emaArr.push(prevEma);
+        } else {
+          const currentEma = c.close * k + prevEma * (1 - k);
+          emaArr.push(currentEma);
+          prevEma = currentEma;
+        }
+      });
+      return emaArr;
+    }
+
+    function calcBollinger(candles, period = 20, mult = 2) {
+      const upper = [];
+      const mid = [];
+      const lower = [];
+      for (let i = 0; i < candles.length; i++) {
+        const start = Math.max(0, i - period + 1);
+        const count = i - start + 1;
+        let sum = 0;
+        for (let j = start; j <= i; j++) {
+          sum += candles[j].close;
+        }
+        const sma = sum / count;
+        let variance = 0;
+        for (let j = start; j <= i; j++) {
+          variance += Math.pow(candles[j].close - sma, 2);
+        }
+        const std = Math.sqrt(variance / count) || 1.2;
+        mid.push(sma);
+        upper.push(sma + mult * std);
+        lower.push(sma - mult * std);
+      }
+      return { upper, mid, lower };
+    }
+
+    function calcRSI(candles, period = 14) {
+      const rsiArr = [];
+      let gains = 0;
+      let losses = 0;
+      for (let i = 1; i <= period && i < candles.length; i++) {
+        const diff = candles[i].close - candles[i - 1].close;
+        if (diff >= 0) gains += diff;
+        else losses += Math.abs(diff);
+      }
+      let avgGain = gains / period;
+      let avgLoss = losses / period;
+
+      for (let i = 0; i < candles.length; i++) {
+        if (i < period) {
+          rsiArr.push(50);
+        } else {
+          const diff = candles[i].close - candles[i - 1].close;
+          const currentGain = diff > 0 ? diff : 0;
+          const currentLoss = diff < 0 ? Math.abs(diff) : 0;
+          avgGain = (avgGain * (period - 1) + currentGain) / period;
+          avgLoss = (avgLoss * (period - 1) + currentLoss) / period;
+          if (avgLoss === 0) {
+            rsiArr.push(100);
+          } else {
+            const rs = avgGain / avgLoss;
+            rsiArr.push(100 - (100 / (1 + rs)));
+          }
+        }
+      }
+      return rsiArr;
+    }
+
+    function calcMACD(candles, fast = 12, slow = 26, signal = 9) {
+      const emaFast = calcEMA(candles, fast);
+      const emaSlow = calcEMA(candles, slow);
+      const dif = emaFast.map((f, i) => f - emaSlow[i]);
+      const k = 2 / (signal + 1);
+      const dea = [];
+      let prev = dif[0] || 0;
+      dif.forEach((d, i) => {
+        if (i === 0) dea.push(prev);
+        else {
+          const cur = d * k + prev * (1 - k);
+          dea.push(cur);
+          prev = cur;
+        }
+      });
+      const hist = dif.map((d, i) => (d - dea[i]) * 2);
+      return { dif, dea, hist };
+    }
+
+    /* =========================================================
+       5. 仿真畫布渲染核心 (PROFESSIONAL TRADINGVIEW CANVAS)
+       ========================================================= */
+    const canvas = document.getElementById('klineCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const wrap = document.getElementById('canvasWrap');
+      canvas.width = wrap.clientWidth * window.devicePixelRatio;
+      canvas.height = wrap.clientHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // 滑鼠游標十字線 (Crosshair) 追蹤與縮放/平移監聽
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartOffset = 0;
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? -4 : 4;
+      const prevCount = GAME.visibleCandles || 42;
+      const maxLimit = Math.min(GAME.maxVisibleCandles || 120, GAME.candleHistory.length);
+      const newCount = Math.max(GAME.minVisibleCandles || 14, Math.min(maxLimit, prevCount + zoomFactor));
+      
+      if (newCount !== prevCount) {
+        GAME.visibleCandles = newCount;
+        updateZoomUI();
+        renderChart();
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      if (e.button === 0 && (e.clientX - rect.left) < rect.width - 65) {
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartOffset = GAME.viewOffset || 0;
+        canvas.style.cursor = 'grabbing';
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      if (isDragging) {
+        const deltaX = e.clientX - dragStartX;
+        const w = rect.width;
+        const candleW = (w - 75) / (GAME.visibleCandles || 42);
+        const shiftCandles = Math.round(deltaX / candleW);
+        const maxOffset = Math.max(0, GAME.candleHistory.length - (GAME.visibleCandles || 42));
+        GAME.viewOffset = Math.max(0, Math.min(maxOffset, dragStartOffset + shiftCandles));
+        updateZoomUI();
+        renderChart();
+      } else {
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        if (mouseX >= 0 && mouseX <= rect.width && mouseY >= 0 && mouseY <= rect.height) {
+          GAME.crosshair.x = mouseX;
+          GAME.crosshair.y = mouseY;
+          GAME.crosshair.active = true;
+          renderChart();
+        } else if (GAME.crosshair.active) {
+          GAME.crosshair.active = false;
+          renderChart();
+        }
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        canvas.style.cursor = 'crosshair';
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      if (!isDragging) {
+        GAME.crosshair.active = false;
+        renderChart();
+      }
+    });
+
+    // 觸控螢幕縮放與拖曳 (Pinch to Zoom & Touch Pan)
+    let touchStartDist = 0;
+    let touchStartCount = 42;
+    let touchStartX = 0;
+    let touchStartOffset = 0;
+
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchStartDist = Math.hypot(dx, dy);
+        touchStartCount = GAME.visibleCandles || 42;
+      } else if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartOffset = GAME.viewOffset || 0;
+      }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && touchStartDist > 0) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 10) {
+          const scale = touchStartDist / dist;
+          const target = Math.round(touchStartCount * scale);
+          const maxLimit = Math.min(GAME.maxVisibleCandles || 120, GAME.candleHistory.length);
+          GAME.visibleCandles = Math.max(GAME.minVisibleCandles || 14, Math.min(maxLimit, target));
+          updateZoomUI();
+          renderChart();
+        }
+      } else if (e.touches.length === 1) {
+        const deltaX = e.touches[0].clientX - touchStartX;
+        const rect = canvas.getBoundingClientRect();
+        const candleW = (rect.width - 75) / (GAME.visibleCandles || 42);
+        const shiftCandles = Math.round(deltaX / candleW);
+        const maxOffset = Math.max(0, GAME.candleHistory.length - (GAME.visibleCandles || 42));
+        GAME.viewOffset = Math.max(0, Math.min(maxOffset, touchStartOffset + shiftCandles));
+        updateZoomUI();
+        renderChart();
+      }
+    }, { passive: true });
+
+    function renderChart() {
+      const wrap = document.getElementById('canvasWrap');
+      const w = wrap.clientWidth;
+      const h = wrap.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      // 劃分主圖與副圖區域 (主圖 70%，副圖 25%)
+      const mainH = h * 0.70;
+      const subTop = mainH + 20;
+      const subH = h - subTop - 18;
+
+      const totalCandles = GAME.candleHistory.length;
+      if (totalCandles === 0) return;
+
+      // 視窗自適應縮放 (Zoom In/Out) 與拖曳位移 (Pan) 視窗範圍計算
+      const count = Math.min(totalCandles, Math.max(GAME.minVisibleCandles || 14, GAME.visibleCandles || 42));
+      const maxOffset = Math.max(0, totalCandles - count);
+      GAME.viewOffset = Math.max(0, Math.min(maxOffset, GAME.viewOffset || 0));
+
+      const endIndex = totalCandles - GAME.viewOffset;
+      const startIndex = Math.max(0, endIndex - count);
+      const visible = GAME.candleHistory.slice(startIndex, endIndex);
+      const offset = startIndex;
+      if (visible.length === 0) return;
+
+      // 計算自適應價格極值 (包含 K 線、布林通道與均線，防止指標線超出畫布)
+      let rawMin = Math.min(...visible.map(c => c.low));
+      let rawMax = Math.max(...visible.map(c => c.high));
+
+      if (GAME.indicators.boll) {
+        const boll = calcBollinger(GAME.candleHistory);
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          if (boll.upper[idx] != null) rawMax = Math.max(rawMax, boll.upper[idx]);
+          if (boll.lower[idx] != null) rawMin = Math.min(rawMin, boll.lower[idx]);
+        });
+      }
+
+      if (GAME.indicators.ma) {
+        const ema7 = calcEMA(GAME.candleHistory, 7);
+        const ema25 = calcEMA(GAME.candleHistory, 25);
+        const ma50 = calcEMA(GAME.candleHistory, 50);
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          if (ema7[idx]) { rawMax = Math.max(rawMax, ema7[idx]); rawMin = Math.min(rawMin, ema7[idx]); }
+          if (ema25[idx]) { rawMax = Math.max(rawMax, ema25[idx]); rawMin = Math.min(rawMin, ema25[idx]); }
+          if (ma50[idx]) { rawMax = Math.max(rawMax, ma50[idx]); rawMin = Math.min(rawMin, ma50[idx]); }
+        });
+      }
+
+      const padding = Math.max(2.5, (rawMax - rawMin) * 0.10);
+      const minP = rawMin - padding;
+      const maxP = rawMax + padding;
+      const pRange = (maxP - minP) || 1;
+
+      const priceToY = (p) => mainH - ((p - minP) / pRange) * (mainH - 35) - 15;
+      const candleW = (w - 75) / visible.length;
+      const bodyW = Math.max(2.5, Math.min(32, candleW * 0.74));
+
+      // 1. 繪製背景網格與右側價格刻度
+      ctx.strokeStyle = '#18243c';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = '#6e82a8';
+      ctx.font = '10px Courier New';
+
+      const gridCount = 5;
+      for (let i = 0; i <= gridCount; i++) {
+        const y = 15 + (mainH - 30) * (i / gridCount);
+        ctx.beginPath();
+        ctx.setLineDash([3, 3]);
+        ctx.moveTo(0, y);
+        ctx.lineTo(w - 65, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const pVal = maxP - (pRange * (i / gridCount));
+        ctx.fillText(pVal.toFixed(2), w - 60, y + 3);
+      }
+
+      // 水印背景標籤
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.font = '900 48px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('TSM · 台積電ADR', (w - 65) / 2, mainH / 2 + 10);
+      ctx.restore();
+
+      // 2. 繪製布林通道 (BOLL Bands)
+      if (GAME.indicators.boll) {
+        const boll = calcBollinger(GAME.candleHistory);
+
+        // 填充布林通道半透明發光雲帶
+        ctx.save();
+        ctx.fillStyle = 'rgba(192, 132, 252, 0.16)';
+        ctx.beginPath();
+        for (let i = 0; i < visible.length; i++) {
+          const idx = offset + i;
+          const x = i * candleW + candleW / 2;
+          const y = priceToY(boll.upper[idx]);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        for (let i = visible.length - 1; i >= 0; i--) {
+          const idx = offset + i;
+          const x = i * candleW + candleW / 2;
+          const y = priceToY(boll.lower[idx]);
+          ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        // 繪製上軌 (Upper Band - 紫光實線)
+        ctx.strokeStyle = '#c084fc';
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          const x = i * candleW + candleW / 2;
+          const y = priceToY(boll.upper[idx]);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // 繪製中軌 (Middle Band / SMA20 - 金黃實線)
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          const x = i * candleW + candleW / 2;
+          const y = priceToY(boll.mid[idx]);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // 繪製下軌 (Lower Band - 紫光實線)
+        ctx.strokeStyle = '#c084fc';
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          const x = i * candleW + candleW / 2;
+          const y = priceToY(boll.lower[idx]);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // 繪製右軸標籤 (BOLL Upper & Lower Price Labels)
+        const lastIdx = GAME.candleHistory.length - 1;
+        const lastUp = boll.upper[lastIdx];
+        const lastDn = boll.lower[lastIdx];
+        const upY = priceToY(lastUp);
+        const dnY = priceToY(lastDn);
+
+        if (upY >= 10 && upY <= mainH) {
+          ctx.fillStyle = '#c084fc';
+          ctx.fillRect(w - 64, upY - 8, 62, 16);
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 9px Courier New';
+          ctx.fillText(`UP ${lastUp.toFixed(1)}`, w - 60, upY + 4);
+        }
+        if (dnY >= 10 && dnY <= mainH) {
+          ctx.fillStyle = '#c084fc';
+          ctx.fillRect(w - 64, dnY - 8, 62, 16);
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 9px Courier New';
+          ctx.fillText(`DN ${lastDn.toFixed(1)}`, w - 60, dnY + 4);
+        }
+
+        ctx.restore();
+      }
+
+      // 3. 繪製 FVG 價值缺口發光區塊
+      if (GAME.indicators.fvg) {
+        GAME.fvgBoxes.forEach(box => {
+          if (box.top <= maxP && box.bottom >= minP) {
+            const yTop = priceToY(box.top);
+            const yBottom = priceToY(box.bottom);
+            ctx.fillStyle = 'rgba(255, 184, 0, 0.12)';
+            ctx.fillRect(0, yTop, w - 65, yBottom - yTop);
+            ctx.strokeStyle = 'rgba(255, 184, 0, 0.45)';
+            ctx.strokeRect(0, yTop, w - 65, yBottom - yTop);
+            ctx.fillStyle = '#ffb800';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('🧲 FVG 缺口吸引區間', 10, yBottom - 4);
+          }
+        });
+      }
+
+      // 4. 繪製千金關卡與心理支撐 (Support & Resistance)
+      if (GAME.indicators.sr) {
+        // 1000 元整數關卡
+        if (maxP >= 1000 && minP <= 1000) {
+          const y1000 = priceToY(1000);
+          ctx.strokeStyle = 'rgba(255, 184, 0, 0.6)';
+          ctx.setLineDash([6, 4]);
+          ctx.beginPath();
+          ctx.moveTo(0, y1000);
+          ctx.lineTo(w - 65, y1000);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#ffb800';
+          ctx.font = 'bold 10px sans-serif';
+          ctx.fillText('👑 1,000 千金關卡 (心理重大阻力)', 12, y1000 - 4);
+        }
+      }
+
+      // 4.5 繪製 BOS / MSS 智慧貨幣結構突破標記 (Smart Money Structure)
+      if (GAME.indicators.bos && visible.length >= 8) {
+        ctx.save();
+        ctx.font = 'bold 9px sans-serif';
+        for (let i = 2; i < visible.length - 2; i++) {
+          const c = visible[i];
+          const prevC = visible[i - 1];
+          const nextC = visible[i + 1];
+
+          // 擺動高點突破 (BOS: Break of Structure)
+          if (c.high > prevC.high && c.high > nextC.high && c.high > visible[i - 2].high) {
+            for (let j = i + 1; j < visible.length; j++) {
+              if (visible[j].close > c.high) {
+                const x1 = i * candleW + candleW / 2;
+                const x2 = j * candleW + candleW / 2;
+                const y = priceToY(c.high);
+                ctx.strokeStyle = '#00e676';
+                ctx.lineWidth = 1.4;
+                ctx.setLineDash([4, 2]);
+                ctx.beginPath();
+                ctx.moveTo(x1, y);
+                ctx.lineTo(x2, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#00e676';
+                ctx.fillText('BOS 突破 ↑', x2 - 50, y - 4);
+                break;
+              }
+            }
+          }
+
+          // 擺動低點跌破 (MSS: Market Structure Shift)
+          if (c.low < prevC.low && c.low < nextC.low && c.low < visible[i - 2].low) {
+            for (let j = i + 1; j < visible.length; j++) {
+              if (visible[j].close < c.low) {
+                const x1 = i * candleW + candleW / 2;
+                const x2 = j * candleW + candleW / 2;
+                const y = priceToY(c.low);
+                ctx.strokeStyle = '#ff3358';
+                ctx.lineWidth = 1.4;
+                ctx.setLineDash([4, 2]);
+                ctx.beginPath();
+                ctx.moveTo(x1, y);
+                ctx.lineTo(x2, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#ff3358';
+                ctx.fillText('MSS 轉折 ↓', x2 - 50, y + 11);
+                break;
+              }
+            }
+          }
+        }
+        ctx.restore();
+      }
+
+      // 5. 繪製 K 線柱體
+      let highestCandle = visible[0];
+      let lowestCandle = visible[0];
+      let highestIdx = 0;
+      let lowestIdx = 0;
+
+      visible.forEach((c, idx) => {
+        if (c.high > highestCandle.high) { highestCandle = c; highestIdx = idx; }
+        if (c.low < lowestCandle.low) { lowestCandle = c; lowestIdx = idx; }
+
+        const x = idx * candleW + candleW / 2;
+        const isBull = c.close >= c.open;
+        const color = isBull ? '#ff3358' : '#00e676';
+
+        // 影線 (Wick)
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(x, priceToY(c.high));
+        ctx.lineTo(x, priceToY(c.low));
+        ctx.stroke();
+
+        // 實體 (Body)
+        const yOpen = priceToY(c.open);
+        const yClose = priceToY(c.close);
+        const topY = Math.min(yOpen, yClose);
+        const bodyH = Math.max(2.5, Math.abs(yClose - yOpen));
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x - bodyW / 2, topY, bodyW, bodyH);
+
+        // X-軸時間戳刻度
+        if (idx % 8 === 0) {
+          ctx.fillStyle = '#64748b';
+          ctx.font = '10px Courier New';
+          const timeStr = c.timestamp ? `${String(c.timestamp.getHours()).padStart(2,'0')}:${String(c.timestamp.getMinutes()).padStart(2,'0')}` : '09:30';
+          ctx.fillText(timeStr, x - 12, mainH + 14);
+        }
+      });
+
+      // 標註極值點標籤 (High & Low Callout Tags)
+      if (highestCandle) {
+        const hX = highestIdx * candleW + candleW / 2;
+        const hY = priceToY(highestCandle.high);
+        ctx.fillStyle = '#ff6b8b';
+        ctx.font = 'bold 10px Courier New';
+        ctx.fillText(`▼ 高 ${highestCandle.high.toFixed(1)}`, hX - 20, hY - 6);
+      }
+      if (lowestCandle) {
+        const lX = lowestIdx * candleW + candleW / 2;
+        const lY = priceToY(lowestCandle.low);
+        ctx.fillStyle = '#00e676';
+        ctx.font = 'bold 10px Courier New';
+        ctx.fillText(`▲ 低 ${lowestCandle.low.toFixed(1)}`, lX - 20, lY + 14);
+      }
+
+      // 6. 繪製均線組 (EMA 7, EMA 25, MA 50)
+      if (GAME.indicators.ma) {
+        const ema7 = calcEMA(GAME.candleHistory, 7);
+        const ema25 = calcEMA(GAME.candleHistory, 25);
+        const ma50 = calcEMA(GAME.candleHistory, 50);
+
+        function drawCurve(arr, color, lw = 2.0) {
+          ctx.save();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = lw;
+          ctx.beginPath();
+          let started = false;
+          visible.forEach((_, i) => {
+            const idx = offset + i;
+            if (idx >= 0 && arr[idx] !== undefined) {
+              const x = i * candleW + candleW / 2;
+              const y = priceToY(arr[idx]);
+              if (!started) { ctx.moveTo(x, y); started = true; }
+              else ctx.lineTo(x, y);
+            }
+          });
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        drawCurve(ema7, '#ffd166', 2.0);  // 快線金黃 (Fast EMA 7)
+        drawCurve(ema25, '#00f3ff', 2.0); // 趨勢霓虹青 (Trend EMA 25)
+        drawCurve(ma50, '#f43f5e', 2.2);  // 生命線薔薇粉 (Key MA 50)
+      }
+
+      // 6.5 繪製專業 TradingView 仿照即時指標銘牌 (On-Chart Live Indicator HUD)
+      ctx.save();
+      let hudY = 24;
+      let targetIdx = endIndex - 1;
+      if (GAME.crosshair.active && GAME.crosshair.x < w - 65 && GAME.crosshair.y < mainH) {
+        const hoverI = Math.floor(GAME.crosshair.x / candleW);
+        if (hoverI >= 0 && hoverI < visible.length) {
+          targetIdx = offset + hoverI;
+        }
+      }
+
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+
+      if (GAME.indicators.ma) {
+        const ema7 = calcEMA(GAME.candleHistory, 7);
+        const ema25 = calcEMA(GAME.candleHistory, 25);
+        const ma50 = calcEMA(GAME.candleHistory, 50);
+        const v7 = (ema7[targetIdx] || 0).toFixed(2);
+        const v25 = (ema25[targetIdx] || 0).toFixed(2);
+        const v50 = (ma50[targetIdx] || 0).toFixed(2);
+
+        // 背景半透明微型膠囊
+        ctx.fillStyle = 'rgba(10, 16, 28, 0.78)';
+        ctx.fillRect(10, hudY - 13, 310, 18);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.strokeRect(10, hudY - 13, 310, 18);
+
+        let hx = 16;
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('EMA', hx, hudY);
+        hx += 30;
+
+        ctx.fillStyle = '#ffd166';
+        ctx.fillText(`7: ${v7}`, hx, hudY);
+        hx += ctx.measureText(`7: ${v7}`).width + 10;
+
+        ctx.fillStyle = '#00f3ff';
+        ctx.fillText(`25: ${v25}`, hx, hudY);
+        hx += ctx.measureText(`25: ${v25}`).width + 10;
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.fillText(`50: ${v50}`, hx, hudY);
+
+        hudY += 22;
+      }
+
+      if (GAME.indicators.boll) {
+        const boll = calcBollinger(GAME.candleHistory);
+        const up = (boll.upper[targetIdx] || 0).toFixed(2);
+        const mid = (boll.mid[targetIdx] || 0).toFixed(2);
+        const dn = (boll.lower[targetIdx] || 0).toFixed(2);
+
+        // 背景半透明微型膠囊
+        ctx.fillStyle = 'rgba(10, 16, 28, 0.78)';
+        ctx.fillRect(10, hudY - 13, 340, 18);
+        ctx.strokeStyle = 'rgba(192, 132, 252, 0.3)';
+        ctx.strokeRect(10, hudY - 13, 340, 18);
+
+        let hx = 16;
+        ctx.fillStyle = '#d8b4fe';
+        ctx.fillText('BOLL (20,2)', hx, hudY);
+        hx += 75;
+
+        ctx.fillStyle = '#c084fc';
+        ctx.fillText(`上軌: ${up}`, hx, hudY);
+        hx += ctx.measureText(`上軌: ${up}`).width + 10;
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText(`中軌: ${mid}`, hx, hudY);
+        hx += ctx.measureText(`中軌: ${mid}`).width + 10;
+
+        ctx.fillStyle = '#c084fc';
+        ctx.fillText(`下軌: ${dn}`, hx, hudY);
+      }
+      ctx.restore();
+
+      // 7. 繪製持倉線與清算線
+      if (GAME.position) {
+        const p = GAME.position;
+        if (p.entryPrice >= minP && p.entryPrice <= maxP) {
+          const entryY = priceToY(p.entryPrice);
+          ctx.strokeStyle = p.type === 'LONG' ? '#ff3358' : '#00e676';
+          ctx.setLineDash([4, 4]);
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(0, entryY);
+          ctx.lineTo(w - 65, entryY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = ctx.strokeStyle;
+          ctx.font = 'bold 10px sans-serif';
+          ctx.fillText(`持倉均價: NT$ ${p.entryPrice} (${p.units.toLocaleString()} 股)`, 12, entryY - 4);
+        }
+
+        if (p.liqPrice > 0 && p.liqPrice >= minP && p.liqPrice <= maxP) {
+          const liqY = priceToY(p.liqPrice);
+          ctx.strokeStyle = '#ff0033';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(0, liqY);
+          ctx.lineTo(w - 65, liqY);
+          ctx.stroke();
+          ctx.fillStyle = '#ff0033';
+          ctx.font = 'bold 10px sans-serif';
+          ctx.fillText(`⚠️ 爆倉清算線: NT$ ${p.liqPrice}`, 12, liqY - 4);
+        }
+      }
+
+      // 8. 即時價格閃爍橫標線 (Blinking price cursor)
+      const curY = priceToY(GAME.currentPrice);
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.8)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(0, curY);
+      ctx.lineTo(w - 65, curY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#00f3ff';
+      ctx.fillRect(w - 63, curY - 9, 60, 18);
+      ctx.fillStyle = '#080b12';
+      ctx.font = 'bold 11px Courier New';
+      ctx.fillText(GAME.currentPrice.toFixed(2), w - 59, curY + 4);
+
+      // 9. 副圖指標渲染 (Switchable Sub-chart Indicator Pane)
+      renderSubChart(visible, offset, w, subTop, subH, candleW, bodyW);
+
+      // 10. 十字線互動 (Crosshair Overlay)
+      if (GAME.crosshair.active && GAME.crosshair.x < w - 65 && GAME.crosshair.y < mainH) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1;
+
+        // 垂直線
+        ctx.beginPath();
+        ctx.moveTo(GAME.crosshair.x, 0);
+        ctx.lineTo(GAME.crosshair.x, mainH);
+        ctx.stroke();
+
+        // 水平線
+        ctx.beginPath();
+        ctx.moveTo(0, GAME.crosshair.y);
+        ctx.lineTo(w - 65, GAME.crosshair.y);
+        ctx.stroke();
+
+        // 浮動價格框
+        const hoverP = maxP - (GAME.crosshair.y - 15) / (mainH - 30) * pRange;
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(w - 63, GAME.crosshair.y - 9, 60, 18);
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px Courier New';
+        ctx.fillText(hoverP.toFixed(2), w - 59, GAME.crosshair.y + 4);
+        ctx.restore();
+      }
+
+      // 11. 粒子與金幣特效
+      updateAndDrawParticles(ctx);
+      updateAndDrawCoins(ctx);
+    }
+
+    // 副圖指標具體實作 (Sub-Chart Rendering)
+    function renderSubChart(visible, offset, w, subTop, subH, candleW, bodyW) {
+      ctx.save();
+      // 副圖背景分隔線
+      ctx.strokeStyle = '#18243c';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, subTop - 4);
+      ctx.lineTo(w, subTop - 4);
+      ctx.stroke();
+
+      if (GAME.subChartMode === 'vol') {
+        // 成交量柱 (VOL)
+        const maxVol = Math.max(...visible.map(c => c.volume)) || 1;
+        visible.forEach((c, idx) => {
+          const x = idx * candleW + candleW / 2;
+          const isBull = c.close >= c.open;
+          const volH = (c.volume / maxVol) * subH;
+          ctx.fillStyle = isBull ? 'rgba(255, 51, 88, 0.65)' : 'rgba(0, 230, 118, 0.65)';
+          ctx.fillRect(x - bodyW / 2, subTop + subH - volH, bodyW, volH);
+        });
+      } else if (GAME.subChartMode === 'macd') {
+        // MACD 柱狀與雙線
+        const macd = calcMACD(GAME.candleHistory);
+        const visibleHist = visible.map((_, i) => macd.hist[offset + i] || 0);
+        const maxH = Math.max(...visibleHist.map(Math.abs), 2);
+        const zeroY = subTop + subH / 2;
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.beginPath();
+        ctx.moveTo(0, zeroY);
+        ctx.lineTo(w - 65, zeroY);
+        ctx.stroke();
+
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          const x = i * candleW + candleW / 2;
+          const hVal = macd.hist[idx] || 0;
+          const barH = (hVal / maxH) * (subH / 2);
+          ctx.fillStyle = hVal >= 0 ? '#ff3358' : '#00e676';
+          if (hVal >= 0) {
+            ctx.fillRect(x - bodyW / 2, zeroY - barH, bodyW, barH);
+          } else {
+            ctx.fillRect(x - bodyW / 2, zeroY, bodyW, -barH);
+          }
+        });
+      } else if (GAME.subChartMode === 'rsi') {
+        // RSI (14) 曲線與 30/70 超買超賣水平線
+        const rsi = calcRSI(GAME.candleHistory);
+
+        // 70 & 30 水平參考線
+        const y70 = subTop + subH * (1 - 70/100);
+        const y30 = subTop + subH * (1 - 30/100);
+
+        ctx.strokeStyle = 'rgba(255, 51, 88, 0.4)';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(0, y70); ctx.lineTo(w - 65, y70); ctx.stroke();
+        ctx.strokeStyle = 'rgba(0, 230, 118, 0.4)';
+        ctx.beginPath(); ctx.moveTo(0, y30); ctx.lineTo(w - 65, y30); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // RSI 曲線
+        ctx.strokeStyle = '#00f3ff';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        visible.forEach((_, i) => {
+          const idx = offset + i;
+          const val = rsi[idx] || 50;
+          const x = i * candleW + candleW / 2;
+          const y = subTop + subH * (1 - val / 100);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* =========================================================
+       5.5 技術線圖縮放與平移核心 (Zoom In / Zoom Out & Pan)
+       ========================================================= */
+    function zoomChart(action) {
+      const step = 6;
+      if (action === 'in') {
+        GAME.visibleCandles = Math.max(GAME.minVisibleCandles || 14, (GAME.visibleCandles || 42) - step);
+      } else if (action === 'out') {
+        const maxLimit = Math.min(GAME.maxVisibleCandles || 120, GAME.candleHistory.length);
+        GAME.visibleCandles = Math.min(maxLimit, (GAME.visibleCandles || 42) + step);
+      } else if (action === 'reset') {
+        GAME.visibleCandles = 42;
+        GAME.viewOffset = 0;
+      }
+      SFX.click();
+      updateZoomUI();
+      renderChart();
+    }
+
+    function resetPanToLive() {
+      GAME.viewOffset = 0;
+      SFX.click();
+      updateZoomUI();
+      renderChart();
+    }
+
+    function updateZoomUI() {
+      const cur = GAME.visibleCandles || 42;
+      const pct = Math.round((42 / cur) * 100);
+      const disp = document.getElementById('zoomLevelDisplay');
+      if (disp) {
+        disp.textContent = `${cur} 根 (${pct}%)`;
+      }
+      const liveBtn = document.getElementById('btnLiveFollow');
+      if (liveBtn) {
+        liveBtn.style.display = (GAME.viewOffset > 0) ? 'inline-flex' : 'none';
+      }
+      const canvasLive = document.getElementById('canvasLiveBtn');
+      if (canvasLive) {
+        canvasLive.style.display = (GAME.viewOffset > 0) ? 'inline-flex' : 'none';
+      }
+    }
+
+    /* =========================================================
+       6. 技術指標切換控制器 (Requirement 2 UI Controller)
+       ========================================================= */
+    function toggleIndicator(key) {
+      const normKey = (key === 'ema') ? 'ma' : key;
+      GAME.indicators[normKey] = !GAME.indicators[normKey];
+      
+      const btn = document.getElementById(normKey === 'ma' ? 'toggleEMA' : `toggle${normKey.toUpperCase()}`)
+               || document.getElementById(`toggle${normKey.toUpperCase()}`);
+      if (btn) {
+        if (GAME.indicators[normKey]) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      SFX.click();
+      updateUI();
+      renderChart();
+    }
+
+    function switchTimeframe(tf) {
+      GAME.timeframe = tf;
+      document.querySelectorAll('.tf-btn').forEach(b => {
+        if (b.textContent === tf) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+      const badge = document.getElementById('tfBadge');
+      if (badge) badge.textContent = tf;
+      SFX.click();
+      initCandles();
+      updateUI();
+      renderChart();
+    }
+
+    function switchSubChart(mode) {
+      GAME.subChartMode = mode;
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`subTab${mode.charAt(0).toUpperCase() + mode.slice(1)}`);
+      if (activeBtn) activeBtn.classList.add('active');
+      SFX.click();
+      renderChart();
+    }
+
+    /* =========================================================
+       7. 截圖同款出牌影像特效 (Requirement 3: Cinematic Cut-In)
+       ========================================================= */
+    let cutinTimer = null;
+
+    function triggerCinematicCutIn(card, issuerText = null, isBull = true) {
+      const cutinLayer = document.getElementById('cinematicCutIn');
+      const laserBanner = document.getElementById('cinematicLaserBanner');
+      const actionText = document.getElementById('cutinActionText');
+      const cardIcon = document.getElementById('cutinCardIcon');
+      const cardName = document.getElementById('cutinCardName');
+      const avatarEl = document.getElementById('bannerAvatar');
+      const issuerEl = document.getElementById('bannerIssuer');
+      const titleEl = document.getElementById('bannerMainTitle');
+      const enTitleEl = document.getElementById('bannerEnTitle');
+      const locEl = document.getElementById('bannerLocationTag');
+
+      // 填入卡牌資料
+      actionText.textContent = card.actionTag || '多頭突擊!!';
+      cardIcon.textContent = card.icon || '🚀';
+      cardName.textContent = card.name || '世界級指令';
+      avatarEl.textContent = card.icon || '🐶';
+      issuerEl.innerHTML = `<span class="diamond-sparkle">◆</span> ${issuerText || card.issuer || '玩家發動了世界層級'}`;
+      titleEl.textContent = card.name;
+      enTitleEl.textContent = card.enTitle || 'MARKET IMPACT';
+      locEl.innerHTML = `<span>📍</span> ${card.location || '全球市場中心'}`;
+
+      // 樣式調整 (多/空色彩)
+      if (isBull) {
+        laserBanner.classList.remove('bull-mode'); // 預設紅漲
+      } else {
+        laserBanner.classList.add('bull-mode'); // 綠跌
+      }
+
+      // 觸發全屏震撼
+      const arena = document.getElementById('arenaMain');
+      arena.classList.remove('screen-shake');
+      void arena.offsetWidth;
+      arena.classList.add('screen-shake');
+
+      // 顯示橫幅與 3D 浮動卡牌
+      cutinLayer.classList.add('active');
+      SFX.cinematicHit();
+
+      if (cutinTimer) clearTimeout(cutinTimer);
+      cutinTimer = setTimeout(() => {
+        cutinLayer.classList.remove('active');
+      }, 1900);
+    }
+
+    /* =========================================================
+       8. 粒子系統與金幣雨 (PARTICLES & COIN RAIN)
+       ========================================================= */
+    function spawnVfxExplosion(title, subtitle, color = '#00f3ff') {
+      const wrap = document.getElementById('canvasWrap');
+      const cx = wrap.clientWidth / 2;
+      const cy = wrap.clientHeight * 0.45;
+
+      for (let i = 0; i < 40; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8 + 2;
+        GAME.particles.push({
+          x: cx, y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color: color,
+          size: Math.random() * 4 + 2,
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+
+      GAME.shockwaves.push({
+        x: cx, y: cy,
+        radius: 10,
+        maxRadius: 180,
+        color: color,
+        alpha: 0.95
+      });
+    }
+
+    function spawnCoinsRain(count = 35) {
+      const wrap = document.getElementById('canvasWrap');
+      for (let i = 0; i < count; i++) {
+        GAME.coinsRain.push({
+          x: Math.random() * (wrap.clientWidth - 80),
+          y: -20 - Math.random() * 150,
+          vy: Math.random() * 5 + 3,
+          vx: (Math.random() - 0.5) * 1.5,
+          size: Math.random() * 8 + 10,
+          rot: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.2
+        });
+      }
+    }
+
+    function updateAndDrawParticles(c) {
+      for (let i = GAME.particles.length - 1; i >= 0; i--) {
+        const p = GAME.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) {
+          GAME.particles.splice(i, 1);
+          continue;
+        }
+        c.fillStyle = p.color;
+        c.globalAlpha = p.alpha;
+        c.beginPath();
+        c.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        c.fill();
+        c.globalAlpha = 1;
+      }
+
+      for (let i = GAME.shockwaves.length - 1; i >= 0; i--) {
+        const s = GAME.shockwaves[i];
+        s.radius += 7;
+        s.alpha -= 0.035;
+        if (s.alpha <= 0 || s.radius >= s.maxRadius) {
+          GAME.shockwaves.splice(i, 1);
+          continue;
+        }
+        c.strokeStyle = s.color;
+        c.lineWidth = 2.5;
+        c.globalAlpha = s.alpha;
+        c.beginPath();
+        c.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        c.stroke();
+        c.globalAlpha = 1;
+      }
+    }
+
+    function updateAndDrawCoins(c) {
+      const wrap = document.getElementById('canvasWrap');
+      const floor = wrap.clientHeight;
+      for (let i = GAME.coinsRain.length - 1; i >= 0; i--) {
+        const coin = GAME.coinsRain[i];
+        coin.y += coin.vy;
+        coin.x += coin.vx;
+        coin.rot += coin.rotSpeed;
+        if (coin.y > floor + 20) {
+          GAME.coinsRain.splice(i, 1);
+          continue;
+        }
+        c.save();
+        c.translate(coin.x, coin.y);
+        c.rotate(coin.rot);
+        c.fillStyle = '#ffb800';
+        c.shadowColor = '#ffb800';
+        c.shadowBlur = 8;
+        c.beginPath();
+        c.arc(0, 0, coin.size / 2, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = '#fff';
+        c.font = 'bold 9px sans-serif';
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.fillText('$', 0, 0);
+        c.restore();
+      }
+    }
+
+    /* =========================================================
+       9. 3D 全球供應鏈雷達地球儀 (3D GLOBE ENGINE)
+       ========================================================= */
+    const globeCanvas = document.getElementById('globeCanvas');
+    const gctx = globeCanvas.getContext('2d');
+    let globeAngle = 0;
+
+    function render3DGlobe() {
+      const wrap = globeCanvas.parentElement;
+      globeCanvas.width = wrap.clientWidth;
+      globeCanvas.height = wrap.clientHeight;
+      const w = globeCanvas.width;
+      const h = globeCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = Math.min(w, h) * 0.38;
+
+      gctx.clearRect(0, 0, w, h);
+      globeAngle += 0.015;
+
+      // 經度線
+      gctx.strokeStyle = 'rgba(0, 243, 255, 0.22)';
+      gctx.lineWidth = 1;
+      for (let i = 0; i < 6; i++) {
+        const theta = globeAngle + (i * Math.PI) / 6;
+        const rx = Math.abs(Math.sin(theta) * r);
+        gctx.beginPath();
+        gctx.ellipse(cx, cy, Math.max(1, rx), r, 0, 0, Math.PI * 2);
+        gctx.stroke();
+      }
+
+      // 緯度線
+      for (let j = 1; j < 4; j++) {
+        const yOff = (j / 4) * r * 0.85;
+        const rad = Math.sqrt(r * r - yOff * yOff);
+        gctx.beginPath();
+        gctx.ellipse(cx, cy - yOff, rad, rad * 0.22, 0, 0, Math.PI * 2);
+        gctx.stroke();
+        gctx.beginPath();
+        gctx.ellipse(cx, cy + yOff, rad, rad * 0.22, 0, 0, Math.PI * 2);
+        gctx.stroke();
+      }
+
+      // 關鍵晶圓廠節點 (新竹、亞利桑那、熊本、德勒斯登)
+      const nodes = [
+        { name: '新竹FAB20', lon: globeAngle + 0.2, lat: 0.2, color: '#00f3ff' },
+        { name: '美國AZ廠', lon: globeAngle + 2.3, lat: 0.35, color: '#ffb800' },
+        { name: '日本熊本JASM', lon: globeAngle + 0.6, lat: 0.3, color: '#ff3358' }
+      ];
+
+      nodes.forEach(node => {
+        const z = Math.cos(node.lon);
+        if (z > 0) {
+          const x = cx + Math.sin(node.lon) * r;
+          const y = cy - node.lat * r;
+          gctx.fillStyle = node.color;
+          gctx.beginPath();
+          gctx.arc(x, y, 4, 0, Math.PI * 2);
+          gctx.fill();
+
+          gctx.fillStyle = '#fff';
+          gctx.font = 'bold 9px sans-serif';
+          gctx.fillText(node.name, x + 6, y + 3);
+        }
+      });
+    }
+
+    /* =========================================================
+       10. 宏觀重大事件排程 (MACRO EVENTS)
+       ========================================================= */
+    setInterval(() => {
+      if (GAME.macroEventTime > 0) {
+        GAME.macroEventTime--;
+        document.getElementById('macroEventTimer').textContent = `⏳ ${GAME.macroEventTime}s`;
+      } else {
+        const evt = MACRO_EVENTS[GAME.macroEventIndex % MACRO_EVENTS.length];
+        GAME.macroEventIndex++;
+        GAME.macroEventTime = 30;
+
+        // 觸發宏觀事件影像橫幅
+        triggerCinematicCutIn({
+          name: evt.name,
+          enTitle: evt.en,
+          issuer: evt.issuer,
+          location: evt.location,
+          icon: evt.avatar,
+          actionTag: '宏觀爆擊!!'
+        }, evt.issuer, true);
+
+        evt.impact();
+        const nextEvt = MACRO_EVENTS[GAME.macroEventIndex % MACRO_EVENTS.length];
+        document.getElementById('macroEventName').textContent = nextEvt.name;
+        document.getElementById('macroEventDesc').textContent = nextEvt.desc;
+      }
+    }, 1000);
+
+    function triggerEarningsCall() {
+      injectTick(22);
+      damageBoss(5000000);
+      addNews('【重大法說會】台積電ADR (TSM) 毛利率衝上 56.5%！AI 處理器營收年增 150%，全線狂飆！', 'bull');
+    }
+
+    function triggerJensenKeynote() {
+      injectTick(20);
+      damageBoss(4500000);
+      addNews('【GTC現場】黃仁勳高舉全新次世代晶片：「沒有台積電就沒有今日的 AI 革命！」', 'bull');
+    }
+
+    function triggerFedRateCut() {
+      injectTick(18);
+      damageBoss(4000000);
+      addNews('【華爾街即時】聯準會無預警釋放寬鬆訊號，國際熱錢如海嘯灌入半導體板塊！', 'bull');
+    }
+
+    function triggerGeopoliticsDip() {
+      injectTick(-18);
+      addNews('【美商務部快訊】半導體出口禁令雜音引發盤中獲利了結賣壓，空方趁機狙擊！', 'bad');
+    }
+
+    /* =========================================================
+       11. 外資 BOSS 禿鷹 AI 戰鬥邏輯
+       ========================================================= */
+    setInterval(() => {
+      if (GAME.bossFunds <= 0 || GAME.timeLeft <= 0) return;
+      const roll = Math.random();
+
+      if (roll < 0.28) {
+        // 空頭突擊砸盤
+        const dump = Math.floor(Math.random() * 8) + 4;
+        if (!GAME.shieldActive) {
+          injectTick(-dump);
+          SFX.dump();
+          addNews(`【外資狙擊】高盛量化單大筆摜壓五檔，每股急殺 -${dump} 元！`, 'bad');
+        } else {
+          addNews(`【防護罩生效】國安基金托底成功，阻擋外資 -${dump} 元砸盤！`, 'bull');
+        }
+      } else if (roll < 0.42 && GAME.position && GAME.position.type === 'LONG') {
+        // 誘多洗盤 / 獵殺散戶多頭
+        const hunt = Math.floor(Math.random() * 10) + 6;
+        if (!GAME.shieldActive) {
+          injectTick(-hunt);
+          SFX.dump();
+          addNews(`【洗盤獵殺】主力誘導突破後急殺洗盤 -${hunt} 元，清理浮額！`, 'bad');
+        }
+      }
+    }, 4000);
+
+    /* =========================================================
+       12. 交易操盤台控制 (OPEN / ADD / TRIM / REVERSE / CLOSE)
+       ========================================================= */
+    function setLeverage(lev, btn) {
+      GAME.leverage = lev;
+      document.querySelectorAll('.lev-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      SFX.click();
+    }
+
+    function openPosition(type) {
+      if (GAME.position) {
+        alert('已有持倉！請使用下方的「加碼」或「減碼」功能！');
+        return;
+      }
+
+      const marginToUse = GAME.playerFunds * 0.35;
+      if (marginToUse <= 0) {
+        alert('資金不足！');
+        return;
+      }
+
+      const totalExposure = marginToUse * GAME.leverage;
+      const sharePrice = GAME.currentPrice;
+      const units = Math.max(10, Math.floor(totalExposure / sharePrice));
+
+      const maxLossMargin = marginToUse * 0.85;
+      let liqPrice = 0;
+      if (type === 'LONG') {
+        liqPrice = +(sharePrice - (maxLossMargin / units)).toFixed(2);
+      } else {
+        liqPrice = +(sharePrice + (maxLossMargin / units)).toFixed(2);
+      }
+
+      GAME.position = {
+        type,
+        entryPrice: sharePrice,
+        units,
+        marginUsed: marginToUse,
+        leverage: GAME.leverage,
+        liqPrice: Math.max(0, liqPrice)
+      };
+
+      if (type === 'LONG') {
+        SFX.pump();
+        addNews(`【建立多倉】以均價 NT$ ${sharePrice} 買進 ${units.toLocaleString()} 股台積電ADR (TSM)！`, 'bull');
+      } else {
+        SFX.dump();
+        addNews(`【建立空倉】以均價 NT$ ${sharePrice} 融券做空 ${units.toLocaleString()} 股台積電ADR (TSM)！`, 'bad');
+      }
+
+      updateUI();
+    }
+
+    function addPosition(extraShares = 1000) {
+      if (!GAME.position) return;
+      const p = GAME.position;
+      const sharePrice = GAME.currentPrice;
+      const requiredMargin = (sharePrice * extraShares) / p.leverage;
+
+      if (GAME.playerFunds < requiredMargin) {
+        alert(`可用資金不足！加碼 ${extraShares.toLocaleString()} 股需要 NT$ ${Math.round(requiredMargin).toLocaleString()} 保證金。`);
+        return;
+      }
+
+      const oldUnits = p.units;
+      const totalUnits = oldUnits + extraShares;
+      const newEntryPrice = +(((p.entryPrice * oldUnits) + (sharePrice * extraShares)) / totalUnits).toFixed(2);
+
+      p.units = totalUnits;
+      p.entryPrice = newEntryPrice;
+      p.marginUsed += requiredMargin;
+
+      const maxLossMargin = p.marginUsed * 0.85;
+      if (p.type === 'LONG') {
+        p.liqPrice = +(newEntryPrice - (maxLossMargin / totalUnits)).toFixed(2);
+      } else {
+        p.liqPrice = +(newEntryPrice + (maxLossMargin / totalUnits)).toFixed(2);
+      }
+      p.liqPrice = Math.max(0, p.liqPrice);
+
+      SFX.cash();
+      addNews(`【加碼追擊】加碼 ${extraShares.toLocaleString()} 股！持倉達 ${totalUnits.toLocaleString()} 股，新持倉均價 NT$ ${newEntryPrice}！`, 'bull');
+      updateUI();
+    }
+
+    function trimPosition(fraction = 0.5) {
+      if (!GAME.position) return;
+      const p = GAME.position;
+      const trimUnits = Math.floor(p.units * fraction);
+      if (trimUnits <= 0) {
+        closePosition();
+        return;
+      }
+
+      const remainingUnits = p.units - trimUnits;
+      const priceDiff = GAME.currentPrice - p.entryPrice;
+      const realizedPnl = (p.type === 'LONG' ? priceDiff : -priceDiff) * trimUnits;
+      const returnMargin = (p.marginUsed * fraction);
+
+      GAME.playerFunds = Math.round(GAME.playerFunds + returnMargin + realizedPnl);
+      p.marginUsed -= returnMargin;
+      p.units = remainingUnits;
+
+      if (p.type === 'LONG' && realizedPnl > 0) {
+        damageBoss(realizedPnl * 1.1);
+        spawnCoinsRain(20);
+      }
+
+      const isProfit = realizedPnl >= 0;
+      SFX.cash();
+      addNews(`【獲利落袋】減碼 ${trimUnits.toLocaleString()} 股，實現損益 NT$ ${Math.round(realizedPnl).toLocaleString()}！剩餘 ${remainingUnits.toLocaleString()} 股。`, isProfit ? 'bull' : 'bad');
+      updateUI();
+    }
+
+    function reversePosition() {
+      if (!GAME.position) return;
+      const targetType = GAME.position.type === 'LONG' ? 'SHORT' : 'LONG';
+      closePosition();
+      setTimeout(() => {
+        openPosition(targetType);
+      }, 100);
+    }
+
+    function closePosition() {
+      if (!GAME.position) return;
+      const p = GAME.position;
+      const priceDiff = GAME.currentPrice - p.entryPrice;
+      const pnlPerShare = p.type === 'LONG' ? priceDiff : -priceDiff;
+      const totalPnl = pnlPerShare * p.units;
+
+      GAME.playerFunds = Math.round(GAME.playerFunds + totalPnl);
+      
+      if (p.type === 'LONG' && totalPnl > 0) {
+        damageBoss(totalPnl * 1.2);
+        spawnCoinsRain(35);
+      }
+
+      const isProfit = totalPnl >= 0;
+      if (isProfit) SFX.victory();
+      else SFX.dump();
+
+      addNews(`【全數平倉】台積電ADR平倉，實現總損益 ${totalPnl >= 0 ? '+' : ''}${Math.round(totalPnl).toLocaleString()} 元！`, isProfit ? 'bull' : 'bad');
+      GAME.position = null;
+      updateUI();
+    }
+
+    function checkPositions() {
+      if (!GAME.position) return;
+      const p = GAME.position;
+      let isLiquidated = false;
+      if (p.type === 'LONG' && GAME.currentPrice <= p.liqPrice) isLiquidated = true;
+      if (p.type === 'SHORT' && GAME.currentPrice >= p.liqPrice) isLiquidated = true;
+
+      if (isLiquidated) {
+        const loss = p.marginUsed;
+        GAME.playerFunds = Math.max(0, Math.round(GAME.playerFunds - loss));
+        SFX.liquidate();
+        addNews(`【爆倉斷頭】保證金不足，遭強制砍倉！損失 NT$ ${Math.round(loss).toLocaleString()}`, 'bad');
+        GAME.position = null;
+      }
+    }
+
+    function damageBoss(dmg) {
+      GAME.bossFunds = Math.max(0, GAME.bossFunds - dmg);
+      updateBossHp();
+      if (GAME.bossFunds <= 0) {
+        triggerVictory();
+      }
+    }
+
+    function updateBossHp() {
+      const pct = Math.max(0, Math.min(100, (GAME.bossFunds / GAME.bossMaxFunds) * 100));
+      document.getElementById('bossHpFill').style.width = `${pct}%`;
+      document.getElementById('bossFundsDisplay').textContent = `NT$ ${Math.round(GAME.bossFunds).toLocaleString()}`;
+    }
+
+    function triggerVictory() {
+      SFX.victory();
+      document.getElementById('modalEmoji').textContent = '🏆';
+      document.getElementById('modalTitle').textContent = '護國神山保衛大捷！';
+      document.getElementById('modalDesc').textContent = '高盛與黑石量化空頭部位全線爆倉！台積電 ADR (TSM) 強勢重返全球晶圓之王！';
+      document.getElementById('finalPlayerFunds').textContent = `NT$ ${Math.round(GAME.playerFunds).toLocaleString()}`;
+      document.getElementById('finalBossFunds').textContent = 'NT$ 0 (清算破產)';
+      document.getElementById('gameModal').classList.add('show');
+    }
+
+    /* =========================================================
+       13. 卡牌管理與出牌系統 (Requirement 3 Integration)
+       ========================================================= */
+    function initHand() {
+      GAME.hand = [];
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+    }
+
+    function drawCard() {
+      if (GAME.hand.length >= 5) return;
+      const randomCard = CARD_LIBRARY[Math.floor(Math.random() * CARD_LIBRARY.length)];
+      GAME.hand.push({ ...randomCard, uid: Math.random() });
+      renderHand();
+    }
+
+    function playCard(uid, elem) {
+      const idx = GAME.hand.findIndex(c => c.uid === uid);
+      if (idx === -1) return;
+      const card = GAME.hand[idx];
+
+      if (GAME.energy < card.cost) {
+        alert('能量 (MANA) 不足！請等待能量恢復。');
+        return;
+      }
+
+      GAME.energy -= card.cost;
+
+      // 觸發全螢幕截圖同款出牌影像特效！
+      triggerCinematicCutIn(card, card.issuer, true);
+
+      card.action();
+      GAME.hand.splice(idx, 1);
+      renderEnergy();
+      renderHand();
+
+      setTimeout(drawCard, 1800);
+    }
+
+    function renderHand() {
+      const container = document.getElementById('handCards');
+      container.innerHTML = '';
+      GAME.hand.forEach(c => {
+        const div = document.createElement('div');
+        div.className = `skill-card ${GAME.energy < c.cost ? 'cost-disabled' : ''}`;
+        div.onclick = (e) => playCard(c.uid, div);
+        div.innerHTML = `
+          <div class="card-cost">${c.cost}</div>
+          <div>
+            <div class="card-icon">${c.icon}</div>
+            <div class="card-name">${c.name}</div>
+            <span class="card-rarity rarity-${c.rarity}">${c.rarityName}</span>
+          </div>
+          <div class="card-desc">${c.desc}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderEnergy() {
+      document.getElementById('energyNum').textContent = `${GAME.energy}/${GAME.maxEnergy}`;
+      const slots = document.getElementById('energySlots');
+      slots.innerHTML = '';
+      for (let i = 1; i <= GAME.maxEnergy; i++) {
+        const s = document.createElement('div');
+        s.className = `energy-slot ${i <= GAME.energy ? 'filled' : ''}`;
+        slots.appendChild(s);
+      }
+    }
+
+    setInterval(() => {
+      if (GAME.energy < GAME.maxEnergy) {
+        GAME.energy++;
+        renderEnergy();
+        renderHand();
+      }
+    }, 2400);
+
+    /* =========================================================
+       14. UI 刷新與主渲染循環 (UI REFRESH & MAIN LOOP)
+       ========================================================= */
+    function updateUI() {
+      // 價格與漲跌
+      const diff = GAME.currentPrice - GAME.prevClose;
+      const pct = (diff / GAME.prevClose) * 100;
+      const isUp = diff >= 0;
+
+      const pEl = document.getElementById('currentPriceDisplay');
+      pEl.textContent = GAME.currentPrice.toFixed(2);
+      pEl.style.color = isUp ? 'var(--bull-red)' : 'var(--bear-green)';
+
+      const cEl = document.getElementById('priceChangeDisplay');
+      cEl.textContent = `${isUp ? '+' : ''}${diff.toFixed(2)} (${isUp ? '+' : ''}${pct.toFixed(2)}%)`;
+      cEl.style.color = isUp ? 'var(--bull-red)' : 'var(--bear-green)';
+
+      // 玩家資金
+      document.getElementById('playerFundsDisplay').textContent = `NT$ ${Math.round(GAME.playerFunds).toLocaleString()}`;
+
+      // OHLC 頂部條即時更新
+      if (GAME.candleHistory.length > 0) {
+        const last = GAME.candleHistory[GAME.candleHistory.length - 1];
+        const elOpen = document.getElementById('barOpen');
+        if (elOpen) elOpen.textContent = last.open.toFixed(2);
+        const elHigh = document.getElementById('barHigh');
+        if (elHigh) elHigh.textContent = last.high.toFixed(2);
+        const elLow = document.getElementById('barLow');
+        if (elLow) elLow.textContent = last.low.toFixed(2);
+        const elClose = document.getElementById('barClose');
+        if (elClose) elClose.textContent = last.close.toFixed(2);
+        const elVol = document.getElementById('barVol');
+        if (elVol) elVol.textContent = (last.volume / 100).toFixed(2) + 'M';
+      }
+
+      // 動態更新頂部 EMA 數值組
+      const barEmaGroup = document.getElementById('barEmaGroup');
+      if (barEmaGroup) {
+        if (GAME.indicators.ma && GAME.candleHistory.length > 0) {
+          barEmaGroup.style.display = 'inline-flex';
+          const e7 = calcEMA(GAME.candleHistory, 7);
+          const e25 = calcEMA(GAME.candleHistory, 25);
+          const m50 = calcEMA(GAME.candleHistory, 50);
+          const lastIdx = GAME.candleHistory.length - 1;
+          const el7 = document.getElementById('barEma7');
+          if (el7) el7.textContent = (e7[lastIdx] || 0).toFixed(2);
+          const el25 = document.getElementById('barEma25');
+          if (el25) el25.textContent = (e25[lastIdx] || 0).toFixed(2);
+          const el50 = document.getElementById('barMa50');
+          if (el50) el50.textContent = (m50[lastIdx] || 0).toFixed(2);
+        } else {
+          barEmaGroup.style.display = 'none';
+        }
+      }
+
+      // 動態更新頂部 BOLL 布林通道數值組
+      const barBollGroup = document.getElementById('barBollGroup');
+      if (barBollGroup) {
+        if (GAME.indicators.boll && GAME.candleHistory.length > 0) {
+          barBollGroup.style.display = 'inline-flex';
+          const boll = calcBollinger(GAME.candleHistory);
+          const lastIdx = GAME.candleHistory.length - 1;
+          const elUp = document.getElementById('barBollUp');
+          if (elUp) elUp.textContent = (boll.upper[lastIdx] || 0).toFixed(2);
+          const elMid = document.getElementById('barBollMid');
+          if (elMid) elMid.textContent = (boll.mid[lastIdx] || 0).toFixed(2);
+          const elLow = document.getElementById('barBollLow');
+          if (elLow) elLow.textContent = (boll.lower[lastIdx] || 0).toFixed(2);
+        } else {
+          barBollGroup.style.display = 'none';
+        }
+      }
+
+      // EMA & RSI 指標快訊更新
+      const rsiArr = calcRSI(GAME.candleHistory);
+      const curRsi = rsiArr[rsiArr.length - 1] || 50;
+      const rsiBadge = document.getElementById('rsiStatusBadge');
+      if (curRsi < 32) {
+        rsiBadge.textContent = `RSI ${curRsi.toFixed(0)} 超賣 (反彈強烈)`;
+        rsiBadge.className = 'status-badge status-bull';
+      } else if (curRsi > 68) {
+        rsiBadge.textContent = `RSI ${curRsi.toFixed(0)} 超買 (高檔警戒)`;
+        rsiBadge.className = 'status-badge status-bear';
+      } else {
+        rsiBadge.textContent = `RSI ${curRsi.toFixed(0)} 均衡整理`;
+        rsiBadge.className = 'status-badge status-rsi';
+      }
+
+      // 持倉面板
+      const posUnitsVal = document.getElementById('posUnitsVal');
+      const posEntryVal = document.getElementById('posEntryVal');
+      const posPnlVal = document.getElementById('posPnlVal');
+      const posLiqVal = document.getElementById('posLiqVal');
+      const noPosBtns = document.getElementById('noPosActions');
+      const posActiveActions = document.getElementById('posActiveActions');
+
+      if (!GAME.position) {
+        posUnitsVal.textContent = '無部位 (0)';
+        posUnitsVal.style.color = 'var(--text-main)';
+        posEntryVal.textContent = '--';
+        posPnlVal.textContent = 'NT$ 0';
+        posPnlVal.style.color = 'var(--text-main)';
+        posLiqVal.textContent = '--';
+        noPosBtns.style.display = 'flex';
+        posActiveActions.style.display = 'none';
+      } else {
+        const p = GAME.position;
+        const diffP = GAME.currentPrice - p.entryPrice;
+        const pnl = (p.type === 'LONG' ? diffP : -diffP) * p.units;
+        const pnlPct = (pnl / p.marginUsed) * 100;
+        const isProfit = pnl >= 0;
+
+        posUnitsVal.textContent = `${p.type === 'LONG' ? '做多' : '做空'} ${p.units.toLocaleString()} 股 (${p.leverage}x)`;
+        posUnitsVal.style.color = p.type === 'LONG' ? 'var(--bull-red)' : 'var(--bear-green)';
+        posEntryVal.textContent = `NT$ ${p.entryPrice}`;
+        posPnlVal.textContent = `${isProfit ? '+' : ''}${Math.round(pnl).toLocaleString()} (${isProfit ? '+' : ''}${pnlPct.toFixed(1)}%)`;
+        posPnlVal.style.color = isProfit ? 'var(--bull-red)' : 'var(--bear-green)';
+        posLiqVal.textContent = `NT$ ${p.liqPrice}`;
+
+        noPosBtns.style.display = 'none';
+        posActiveActions.style.display = 'grid';
+      }
+    }
+
+    function addNews(text, type = '') {
+      const feed = document.getElementById('newsFeed');
+      const item = document.createElement('div');
+      item.className = `news-item ${type}`;
+      item.textContent = text;
+      feed.insertBefore(item, feed.firstChild);
+      if (feed.children.length > 8) {
+        feed.removeChild(feed.lastChild);
+      }
+    }
+
+    setInterval(() => {
+      if (GAME.timeLeft > 0) {
+        GAME.timeLeft--;
+        const m = String(Math.floor(GAME.timeLeft / 60)).padStart(2, '0');
+        const s = String(GAME.timeLeft % 60).padStart(2, '0');
+        document.getElementById('roundTimer').textContent = `關卡 ${GAME.stage}：外資禿鷹決戰 ⏳ ${m}:${s}`;
+      }
+    }, 1000);
+
+    function gameLoop() {
+      renderChart();
+      render3DGlobe();
+      requestAnimationFrame(gameLoop);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      initCandles();
+      initHand();
+      renderEnergy();
+      updateBossHp();
+      updateUI();
+      gameLoop();
+      addNews('【開盤快訊】美股台積電ADR (TSM) 戰情室啟動，無漲跌幅限制，全球多空大對決！', 'bull');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>臺中市外送員交通事故數據儀表板 (2022-2026)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .chart-point {
+      transition: r 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke-width 0.2s;
+    }
+    .chart-point:hover {
+      r: 7;
+      stroke-width: 3px;
+    }
+    .chart-bar {
+      transition: opacity 0.2s, y 0.3s, height 0.3s;
+    }
+    .chart-bar:hover {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased p-4 md:p-8 min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Header Section -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            臺中市政府開放資料庫 (Open Data)
+          </span>
+          <span class="text-xs text-slate-400">111年第3季 - 115年第2季</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white mt-1">
+          臺中市外送員交通事故趨勢儀表板 (2022 - 2026)
+        </h1>
+        <p class="text-sm text-slate-400 mt-0.5">
+          彙整自臺中市政府警察局 17 筆外送員事故資料集，支援跨年度與多類別動態探勘
+        </p>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex items-center gap-3">
+        <div class="inline-flex p-1 bg-slate-800 border border-slate-700 rounded-lg text-xs">
+          <button id="chartTypeLine" onclick="setChartType('line')" class="px-3 py-1.5 rounded-md font-medium transition bg-amber-500 text-white shadow-sm">
+            折線圖 (Line)
+          </button>
+          <button id="chartTypeBar" onclick="setChartType('bar')" class="px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white">
+            柱狀圖 (Bar)
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Interactive Filter Toolbar -->
+    <section class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 md:p-5 shadow-sm space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <!-- 1. Year Selector -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            📅 1. 選擇觀測年份 (Select Years)
+          </label>
+          <div class="flex flex-wrap gap-1.5" id="yearButtonsContainer">
+            <button onclick="selectYear('ALL')" data-year="ALL" class="year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-amber-500 bg-amber-500/10 text-amber-400">全部 (2022-2026)</button>
+            <button onclick="selectYear('2022')" data-year="2022" class="year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">2022 (111)</button>
+            <button onclick="selectYear('2023')" data-year="2023" class="year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">2023 (112)</button>
+            <button onclick="selectYear('2024')" data-year="2024" class="year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">2024 (113)</button>
+            <button onclick="selectYear('2025')" data-year="2025" class="year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">2025 (114)</button>
+            <button onclick="selectYear('2026')" data-year="2026" class="year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">2026 (115)</button>
+          </div>
+        </div>
+
+        <!-- 2. Category Selector -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            🎯 2. 選擇事故類別 (Select Category)
+          </label>
+          <div class="flex flex-wrap gap-1.5" id="catButtonsContainer">
+            <button onclick="selectCategory('total')" data-cat="total" class="cat-btn px-2.5 py-1 text-xs font-medium rounded-md border border-amber-500 bg-amber-500/10 text-amber-400">總計案件</button>
+            <button onclick="selectCategory('a2')" data-cat="a2" class="cat-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">A2類 (受傷事故)</button>
+            <button onclick="selectCategory('a3')" data-cat="a3" class="cat-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">A3類 (純財損)</button>
+            <button onclick="selectCategory('a1')" data-cat="a1" class="cat-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500">A1類 (死亡事故)</button>
+          </div>
+        </div>
+
+        <!-- 3. Metric Focus Selector -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            👥 3. 人員傷亡指標 (Casualties)
+          </label>
+          <div class="flex flex-wrap gap-1.5" id="metricButtonsContainer">
+            <button onclick="selectMetric('injury')" data-metric="injury" class="metric-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-rose-500">受傷人數 (Injured)</button>
+            <button onclick="selectMetric('death')" data-metric="death" class="metric-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-rose-500">死亡人數 (Fatalities)</button>
+            <button onclick="resetMetricFocus()" id="btnResetMetric" class="px-2.5 py-1 text-xs font-medium rounded-md border border-dashed border-slate-600 text-slate-400 hover:text-white">以事故類別為主</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Active Filter Banner -->
+      <div class="pt-2 border-t border-slate-700 flex items-center justify-between text-xs text-slate-400">
+        <div>
+          當前檢視：<span id="currentFilterLabel" class="font-semibold text-amber-400">全部年份 (2022-2026) ｜ 總計案件</span>
+        </div>
+        <div id="dataPointsCount">包含 16 個統計季度</div>
+      </div>
+    </section>
+
+    <!-- Key Metrics / KPI Cards -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 shadow-sm">
+        <span class="text-xs text-slate-400 font-medium">總發生件數 (Incidents)</span>
+        <div class="text-2xl md:text-3xl font-bold text-white mt-1" id="kpiTotal">0</div>
+        <div class="text-xs text-amber-400 mt-1" id="kpiSubTotal">受傷與財損綜合</div>
+      </div>
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 shadow-sm">
+        <span class="text-xs text-slate-400 font-medium">A2類 (受傷事故)</span>
+        <div class="text-2xl md:text-3xl font-bold text-sky-400 mt-1" id="kpiA2">0</div>
+        <div class="text-xs text-sky-400/80 mt-1" id="kpiA2Ratio">佔比 0%</div>
+      </div>
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 shadow-sm">
+        <span class="text-xs text-slate-400 font-medium">受傷人數 (Total Injured)</span>
+        <div class="text-2xl md:text-3xl font-bold text-rose-400 mt-1" id="kpiInjured">0</div>
+        <div class="text-xs text-rose-400/80 mt-1" id="kpiInjuredRate">件均受傷 0 人</div>
+      </div>
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 shadow-sm">
+        <span class="text-xs text-slate-400 font-medium">A1類 (死亡件數 / 亡者)</span>
+        <div class="text-2xl md:text-3xl font-bold text-emerald-400 mt-1" id="kpiA1">0 / 0</div>
+        <div class="text-xs text-emerald-400/80 mt-1" id="kpiA1Desc">重大致命碰撞</div>
+      </div>
+    </section>
+
+    <!-- Main Chart Section -->
+    <section class="bg-slate-800/80 border border-slate-700 rounded-xl p-5 shadow-sm space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-base font-semibold text-white" id="chartMainTitle">
+            外送員交通事故走勢圖 (2022 - 2026)
+          </h2>
+          <p class="text-xs text-slate-400" id="chartSubtitle">
+            滑鼠游標移至圖表節點可檢視每季完整傷亡明細
+          </p>
+        </div>
+        <!-- Legend Indicator -->
+        <div class="flex items-center gap-4 text-xs" id="chartLegend">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-amber-500"></span>
+            <span id="legendMetricLabel" class="text-white">主要指標</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-slate-400">
+            <span class="w-3 h-3 rounded-full border border-sky-400"></span>
+            <span>A2 致傷參考</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SVG Chart Canvas Container -->
+      <div class="relative w-full h-[320px] md:h-[380px] overflow-hidden">
+        <svg id="trendSvg" class="w-full h-full select-none" viewBox="0 0 900 360" preserveAspectRatio="none">
+          <!-- Dynamic rendering via JavaScript -->
+        </svg>
+
+        <!-- Floating Tooltip -->
+        <div id="chartTooltip" class="pointer-events-none absolute z-20 hidden p-3 rounded-lg shadow-xl text-xs bg-slate-900/95 text-white border border-slate-700 transition-opacity backdrop-blur-sm min-w-[190px]">
+          <div class="font-bold text-amber-400 border-b border-slate-700 pb-1 mb-1.5" id="ttQuarter">2024 Q1</div>
+          <div class="space-y-1">
+            <div class="flex justify-between"><span class="text-slate-400">當前指標：</span><span class="font-semibold text-amber-300" id="ttCurrentVal">0</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">總事故數：</span><span class="font-medium" id="ttTotal">0 件</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">A2 受傷事故：</span><span class="font-medium text-sky-300" id="ttA2">0 件</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">A3 財損事故：</span><span class="font-medium text-slate-300" id="ttA3">0 件</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">受傷總人數：</span><span class="font-medium text-rose-300" id="ttInjured">0 人</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">死亡人數：</span><span class="font-medium text-emerald-300" id="ttDeath">0 人</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Breakdown & Insights Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Category Distribution Bar Card -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-5 shadow-sm space-y-4">
+        <h3 class="text-sm font-semibold text-white">
+          事故類型比例結構 (Composition)
+        </h3>
+        <p class="text-xs text-slate-400">目前所選篩選區間之事故類型加總分佈</p>
+
+        <!-- Stacked Bar -->
+        <div class="space-y-3">
+          <div class="w-full bg-slate-900 rounded-full h-4 overflow-hidden flex" id="stackedBarContainer">
+            <div id="barA2" class="bg-sky-500 h-full transition-all duration-300" style="width: 75%;" title="A2 受傷事故"></div>
+            <div id="barA3" class="bg-amber-500 h-full transition-all duration-300" style="width: 24.5%;" title="A3 財損事故"></div>
+            <div id="barA1" class="bg-rose-500 h-full transition-all duration-300" style="width: 0.5%;" title="A1 死亡事故"></div>
+          </div>
+
+          <div class="space-y-2 pt-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-sky-500"></span>
+                <span>A2 類（致傷事故）</span>
+              </div>
+              <span class="font-semibold text-sky-400" id="distA2">0 件 (0%)</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-amber-500"></span>
+                <span>A3 類（單純財損）</span>
+              </div>
+              <span class="font-semibold text-amber-400" id="distA3">0 件 (0%)</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-slate-900/60">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-rose-500"></span>
+                <span>A1 類（致命死亡）</span>
+              </div>
+              <span class="font-semibold text-rose-400" id="distA1">0 件 (0%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend Takeaways & Policy Insights -->
+      <div class="lg:col-span-2 bg-slate-800/80 border border-slate-700 rounded-xl p-5 shadow-sm space-y-3">
+        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+          <span>💡</span> 統計趨勢與防制洞察 (Analytical Takeaways)
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/50 space-y-1">
+            <div class="font-semibold text-amber-400">1. 歷史峰值與常態收斂</div>
+            <p class="text-slate-300 leading-relaxed">
+              臺中市外送員事故歷史高峰落在 <strong>112年第3季 (670件)</strong> 與 <strong>113年第1季 (569件)</strong>。自 114 年起各季穩定壓制在 380~430 件區間，整體防制呈現常態化收斂。
+            </p>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/50 space-y-1">
+            <div class="font-semibold text-sky-400">2. 114 年度全面改善</div>
+            <p class="text-slate-300 leading-relaxed">
+              114 全年事故總計 1,629 件、受傷 1,644 人，相較於 113 全年度 (1,933件、2,032傷)，<strong>事故件數大幅年減 15.73%</strong>，受傷人數年減 19.09%。
+            </p>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/50 space-y-1">
+            <div class="font-semibold text-rose-400">3. 高致傷率特徵 (70%+)</div>
+            <p class="text-slate-300 leading-relaxed">
+              外送員事故致傷比例高達 74%~80%，且平均每起致傷事故造成 1.35~1.45 人受傷，顯示機車碰撞往往波及自身與其他用路人。
+            </p>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/50 space-y-1">
+            <div class="font-semibold text-emerald-400">4. 季節性需求衝擊</div>
+            <p class="text-slate-300 leading-relaxed">
+              每年第 1 季（低溫雨天、春節採買）與第 4 季（年末雙11/雙12促銷旺季）事故量顯著高於第 2、3 季，應針對冬季天候實施重點道安預警。
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Data Detail Table Section -->
+    <section class="bg-slate-800/80 border border-slate-700 rounded-xl p-5 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-semibold text-white">
+            各季事故數據明細表 (Quarterly Breakdown Table)
+          </h3>
+          <p class="text-xs text-slate-400">依所選年份自動篩選，含各類別件數與傷亡指標</p>
+        </div>
+        <button onclick="downloadFilteredCsv()" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-600 bg-slate-700 text-white hover:border-amber-500 transition">
+          匯出目前數據 (CSV)
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-200">
+          <thead class="bg-slate-900/80 uppercase tracking-wider text-slate-400 border-b border-slate-700">
+            <tr>
+              <th class="py-2.5 px-3">統計季度</th>
+              <th class="py-2.5 px-3">公曆/民國</th>
+              <th class="py-2.5 px-3 text-right">總件數</th>
+              <th class="py-2.5 px-3 text-right text-rose-400">A1 類 (死)</th>
+              <th class="py-2.5 px-3 text-right text-sky-400">A2 類 (傷)</th>
+              <th class="py-2.5 px-3 text-right text-slate-400">A3 類 (損)</th>
+              <th class="py-2.5 px-3 text-right text-rose-400">死亡人數</th>
+              <th class="py-2.5 px-3 text-right text-amber-400">受傷人數</th>
+              <th class="py-2.5 px-3 text-right">A2 致傷率</th>
+              <th class="py-2.5 px-3 text-right">件均傷患</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody" class="divide-y divide-slate-700">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer Note -->
+    <footer class="pt-4 pb-8 text-center text-xs text-slate-500 border-t border-slate-800">
+      資料來源：臺中市政府開放資料平臺 (TCPB 臺中市政府警察局) ｜ 涵蓋資料集編號包含 20238ddd-628e-48eb-818f-d02bf69bca39 等 17 筆專題統計
+    </footer>
+
+  </div>
+
+  <!-- Dashboard Controller Script -->
+  <script>
+    // 16 Verified Quarters Data from Taichung Open Data Platform
+    const RAW_DATA = [
+      { id: "111-Q3", year: 2022, roc_year: 111, q: "Q3", label: "2022 Q3", roc_label: "111-3", total: 299, a1: 1, a2: 250, a3: 48, death: 1, injury: 349 },
+      { id: "111-Q4", year: 2022, roc_year: 111, q: "Q4", label: "2022 Q4", roc_label: "111-4", total: 363, a1: 0, a2: 290, a3: 73, death: 0, injury: 411 },
+      { id: "112-Q1", year: 2023, roc_year: 112, q: "Q1", label: "2023 Q1", roc_label: "112-1", total: 433, a1: 1, a2: 348, a3: 84, death: 1, injury: 518 },
+      { id: "112-Q2", year: 2023, roc_year: 112, q: "Q2", label: "2023 Q2", roc_label: "112-2", total: 365, a1: 1, a2: 285, a3: 79, death: 1, injury: 392 },
+      { id: "112-Q3", year: 2023, roc_year: 112, q: "Q3", label: "2023 Q3", roc_label: "112-3", total: 670, a1: 1, a2: 501, a3: 168, death: 1, injury: 688 },
+      { id: "112-Q4", year: 2023, roc_year: 112, q: "Q4", label: "2023 Q4", roc_label: "112-4", total: 537, a1: 0, a2: 427, a3: 110, death: 0, injury: 596 },
+      { id: "113-Q1", year: 2024, roc_year: 113, q: "Q1", label: "2024 Q1", roc_label: "113-1", total: 569, a1: 0, a2: 429, a3: 140, death: 0, injury: 594 },
+      { id: "113-Q2", year: 2024, roc_year: 113, q: "Q2", label: "2024 Q2", roc_label: "113-2", total: 420, a1: 1, a2: 314, a3: 105, death: 1, injury: 432 },
+      { id: "113-Q3", year: 2024, roc_year: 113, q: "Q3", label: "2024 Q3", roc_label: "113-3", total: 479, a1: 0, a2: 356, a3: 123, death: 0, injury: 493 },
+      { id: "113-Q4", year: 2024, roc_year: 113, q: "Q4", label: "2024 Q4", roc_label: "113-4", total: 465, a1: 0, a2: 369, a3: 96, death: 0, injury: 513 },
+      { id: "114-Q1", year: 2025, roc_year: 114, q: "Q1", label: "2025 Q1", roc_label: "114-1", total: 431, a1: 2, a2: 315, a3: 114, death: 2, injury: 444 },
+      { id: "114-Q2", year: 2025, roc_year: 114, q: "Q2", label: "2025 Q2", roc_label: "114-2", total: 388, a1: 0, a2: 282, a3: 106, death: 0, injury: 380 },
+      { id: "114-Q3", year: 2025, roc_year: 114, q: "Q3", label: "2025 Q3", roc_label: "114-3", total: 389, a1: 0, a2: 295, a3: 94, death: 0, injury: 388 },
+      { id: "114-Q4", year: 2025, roc_year: 114, q: "Q4", label: "2025 Q4", roc_label: "114-4", total: 421, a1: 0, a2: 310, a3: 111, death: 0, injury: 432 },
+      { id: "115-Q1", year: 2026, roc_year: 115, q: "Q1", label: "2026 Q1", roc_label: "115-1", total: 408, a1: 0, a2: 292, a3: 116, death: 0, injury: 396 },
+      { id: "115-Q2", year: 2026, roc_year: 115, q: "Q2", label: "2026 Q2", roc_label: "115-2", total: 372, a1: 1, a2: 279, a3: 92, death: 1, injury: 371 }
+    ];
+
+    // State
+    let selectedYear = "ALL"; // ALL, 2022, 2023, 2024, 2025, 2026
+    let selectedCategory = "total"; // total, a1, a2, a3
+    let selectedMetric = null; // null, injury, death
+    let chartType = "line"; // line or bar
+
+    const CATEGORY_NAMES = {
+      total: "總計案件",
+      a1: "A1類 (死亡事故)",
+      a2: "A2類 (受傷事故)",
+      a3: "A3類 (純財損事故)"
+    };
+
+    const METRIC_NAMES = {
+      injury: "受傷總人數",
+      death: "死亡總人數"
+    };
+
+    function getFilteredData() {
+      if (selectedYear === "ALL") {
+        return [...RAW_DATA];
+      }
+      return RAW_DATA.filter(d => d.year.toString() === selectedYear);
+    }
+
+    function getActiveMetricKey() {
+      if (selectedMetric) return selectedMetric;
+      return selectedCategory;
+    }
+
+    function getActiveMetricLabel() {
+      if (selectedMetric) return METRIC_NAMES[selectedMetric];
+      return CATEGORY_NAMES[selectedCategory];
+    }
+
+    function setChartType(type) {
+      chartType = type;
+      document.getElementById("chartTypeLine").className = type === "line"
+        ? "px-3 py-1.5 rounded-md font-medium transition bg-amber-500 text-white shadow-sm"
+        : "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white";
+      document.getElementById("chartTypeBar").className = type === "bar"
+        ? "px-3 py-1.5 rounded-md font-medium transition bg-amber-500 text-white shadow-sm"
+        : "px-3 py-1.5 rounded-md font-medium transition text-slate-400 hover:text-white";
+      renderDashboard();
+    }
+
+    function selectYear(yr) {
+      selectedYear = yr;
+      document.querySelectorAll(".year-btn").forEach(btn => {
+        if (btn.getAttribute("data-year") === yr) {
+          btn.className = "year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-amber-500 bg-amber-500/10 text-amber-400 font-semibold";
+        } else {
+          btn.className = "year-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500";
+        }
+      });
+      renderDashboard();
+    }
+
+    function selectCategory(cat) {
+      selectedCategory = cat;
+      selectedMetric = null;
+      updateCatButtons();
+      updateMetricButtons();
+      renderDashboard();
+    }
+
+    function selectMetric(met) {
+      selectedMetric = met;
+      updateCatButtons();
+      updateMetricButtons();
+      renderDashboard();
+    }
+
+    function resetMetricFocus() {
+      selectedMetric = null;
+      updateCatButtons();
+      updateMetricButtons();
+      renderDashboard();
+    }
+
+    function updateCatButtons() {
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        const cat = btn.getAttribute("data-cat");
+        if (!selectedMetric && cat === selectedCategory) {
+          btn.className = "cat-btn px-2.5 py-1 text-xs font-medium rounded-md border border-amber-500 bg-amber-500/10 text-amber-400 font-semibold";
+        } else {
+          btn.className = "cat-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-amber-500";
+        }
+      });
+    }
+
+    function updateMetricButtons() {
+      document.querySelectorAll(".metric-btn").forEach(btn => {
+        const met = btn.getAttribute("data-metric");
+        if (met === selectedMetric) {
+          btn.className = "metric-btn px-2.5 py-1 text-xs font-medium rounded-md border border-rose-500 bg-rose-500/10 text-rose-400 font-semibold";
+        } else {
+          btn.className = "metric-btn px-2.5 py-1 text-xs font-medium rounded-md border border-slate-700 text-slate-300 hover:border-rose-500";
+        }
+      });
+    }
+
+    function renderDashboard() {
+      const data = getFilteredData();
+      const metricKey = getActiveMetricKey();
+      const metricLabel = getActiveMetricLabel();
+
+      const yearText = selectedYear === "ALL" ? "全部年份 (2022-2026)" : `${selectedYear} 年 (民國 ${parseInt(selectedYear)-1911} 年)`;
+      document.getElementById("currentFilterLabel").textContent = `${yearText} ｜ ${metricLabel}`;
+      document.getElementById("dataPointsCount").textContent = `包含 ${data.length} 個統計季度`;
+      document.getElementById("legendMetricLabel").textContent = metricLabel;
+
+      let totalIncidents = 0;
+      let totalA1 = 0;
+      let totalA2 = 0;
+      let totalA3 = 0;
+      let totalInjured = 0;
+      let totalDeath = 0;
+
+      data.forEach(d => {
+        totalIncidents += d.total;
+        totalA1 += d.a1;
+        totalA2 += d.a2;
+        totalA3 += d.a3;
+        totalInjured += d.injury;
+        totalDeath += d.death;
+      });
+
+      document.getElementById("kpiTotal").textContent = totalIncidents.toLocaleString();
+      document.getElementById("kpiA2").textContent = totalA2.toLocaleString();
+      const a2Pct = totalIncidents > 0 ? (totalA2 / totalIncidents * 100).toFixed(1) : "0.0";
+      document.getElementById("kpiA2Ratio").textContent = `佔整體事故 ${a2Pct}%`;
+
+      document.getElementById("kpiInjured").textContent = totalInjured.toLocaleString();
+      const avgInjured = totalA2 > 0 ? (totalInjured / totalA2).toFixed(2) : "0.00";
+      document.getElementById("kpiInjuredRate").textContent = `每件A2波及 ${avgInjured} 人`;
+
+      document.getElementById("kpiA1").textContent = `${totalA1} 件 / ${totalDeath} 亡`;
+      document.getElementById("kpiA1Desc").textContent = totalA1 === 0 ? "本區間無死亡事故 ✨" : `累計 ${totalDeath} 名人員不幸罹難`;
+
+      const a2BarPct = totalIncidents > 0 ? (totalA2 / totalIncidents * 100).toFixed(1) : 0;
+      const a3BarPct = totalIncidents > 0 ? (totalA3 / totalIncidents * 100).toFixed(1) : 0;
+      const a1BarPct = totalIncidents > 0 ? (totalA1 / totalIncidents * 100).toFixed(1) : 0;
+
+      document.getElementById("barA2").style.width = `${a2BarPct}%`;
+      document.getElementById("barA3").style.width = `${a3BarPct}%`;
+      document.getElementById("barA1").style.width = `${a1BarPct}%`;
+
+      document.getElementById("distA2").textContent = `${totalA2} 件 (${a2BarPct}%)`;
+      document.getElementById("distA3").textContent = `${totalA3} 件 (${a3BarPct}%)`;
+      document.getElementById("distA1").textContent = `${totalA1} 件 (${a1BarPct}%)`;
+
+      renderChart(data, metricKey, metricLabel);
+      renderTable(data);
+    }
+
+    function renderChart(data, metricKey, metricLabel) {
+      const svg = document.getElementById("trendSvg");
+      svg.innerHTML = "";
+
+      const width = 900;
+      const height = 360;
+      const padLeft = 60;
+      const padRight = 40;
+      const padTop = 30;
+      const padBottom = 50;
+
+      const chartW = width - padLeft - padRight;
+      const chartH = height - padTop - padBottom;
+
+      const values = data.map(d => d[metricKey]);
+      const maxVal = Math.max(...values, 5);
+      const yMax = Math.ceil(maxVal * 1.15);
+
+      const ySteps = 4;
+      for (let i = 0; i <= ySteps; i++) {
+        const val = Math.round((yMax / ySteps) * i);
+        const yPos = padTop + chartH - (i / ySteps) * chartH;
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", padLeft);
+        line.setAttribute("x2", width - padRight);
+        line.setAttribute("y1", yPos);
+        line.setAttribute("y2", yPos);
+        line.setAttribute("stroke", "#475569");
+        line.setAttribute("stroke-opacity", i === 0 ? "0.4" : "0.2");
+        line.setAttribute("stroke-dasharray", i === 0 ? "none" : "4,4");
+        svg.appendChild(line);
+
+        const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        txt.setAttribute("x", padLeft - 10);
+        txt.setAttribute("y", yPos + 4);
+        txt.setAttribute("text-anchor", "end");
+        txt.setAttribute("font-size", "11");
+        txt.setAttribute("fill", "#94a3b8");
+        txt.textContent = val;
+        svg.appendChild(txt);
+      }
+
+      const count = data.length;
+      const stepX = count > 1 ? chartW / (count - 1) : chartW / 2;
+
+      const points = data.map((d, i) => {
+        const x = count === 1 ? padLeft + chartW / 2 : padLeft + i * stepX;
+        const val = d[metricKey];
+        const y = padTop + chartH - (val / yMax) * chartH;
+        return { x, y, val, d };
+      });
+
+      if (chartType === "bar") {
+        const barWidth = Math.min(chartW / count * 0.55, 48);
+        points.forEach((p, idx) => {
+          const barHeight = (p.val / yMax) * chartH;
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("class", "chart-bar cursor-pointer");
+          rect.setAttribute("x", p.x - barWidth / 2);
+          rect.setAttribute("y", p.y);
+          rect.setAttribute("width", barWidth);
+          rect.setAttribute("height", barHeight);
+          rect.setAttribute("rx", "4");
+          rect.setAttribute("fill", "#f59e0b");
+          rect.setAttribute("data-index", idx);
+
+          attachTooltipEvents(rect, p);
+          svg.appendChild(rect);
+
+          const valTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          valTxt.setAttribute("x", p.x);
+          valTxt.setAttribute("y", p.y - 6);
+          valTxt.setAttribute("text-anchor", "middle");
+          valTxt.setAttribute("font-size", "11");
+          valTxt.setAttribute("font-weight", "600");
+          valTxt.setAttribute("fill", "#f59e0b");
+          valTxt.textContent = p.val;
+          svg.appendChild(valTxt);
+        });
+      } else {
+        if (points.length > 1) {
+          const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+          defs.innerHTML = `
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.0"/>
+            </linearGradient>
+          `;
+          svg.appendChild(defs);
+
+          let pathD = `M ${points[0].x} ${points[0].y}`;
+          for (let i = 1; i < points.length; i++) {
+            pathD += ` L ${points[i].x} ${points[i].y}`;
+          }
+
+          const areaD = `${pathD} L ${points[points.length - 1].x} ${padTop + chartH} L ${points[0].x} ${padTop + chartH} Z`;
+          const areaPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          areaPath.setAttribute("d", areaD);
+          areaPath.setAttribute("fill", "url(#areaGrad)");
+          svg.appendChild(areaPath);
+
+          const linePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          linePath.setAttribute("d", pathD);
+          linePath.setAttribute("fill", "none");
+          linePath.setAttribute("stroke", "#f59e0b");
+          linePath.setAttribute("stroke-width", "3");
+          linePath.setAttribute("stroke-linejoin", "round");
+          linePath.setAttribute("stroke-linecap", "round");
+          svg.appendChild(linePath);
+        }
+
+        points.forEach((p, idx) => {
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("class", "chart-point cursor-pointer");
+          circle.setAttribute("cx", p.x);
+          circle.setAttribute("cy", p.y);
+          circle.setAttribute("r", "5");
+          circle.setAttribute("fill", "#0f172a");
+          circle.setAttribute("stroke", "#f59e0b");
+          circle.setAttribute("stroke-width", "2.5");
+          circle.setAttribute("data-index", idx);
+
+          attachTooltipEvents(circle, p);
+          svg.appendChild(circle);
+
+          const valTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          valTxt.setAttribute("x", p.x);
+          valTxt.setAttribute("y", p.y - 10);
+          valTxt.setAttribute("text-anchor", "middle");
+          valTxt.setAttribute("font-size", "11");
+          valTxt.setAttribute("font-weight", "600");
+          valTxt.setAttribute("fill", "#fbbf24");
+          valTxt.textContent = p.val;
+          svg.appendChild(valTxt);
+        });
+      }
+
+      points.forEach(p => {
+        const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        txt.setAttribute("x", p.x);
+        txt.setAttribute("y", height - padBottom + 18);
+        txt.setAttribute("text-anchor", "middle");
+        txt.setAttribute("font-size", "11");
+        txt.setAttribute("fill", "#94a3b8");
+        txt.textContent = p.d.label;
+        svg.appendChild(txt);
+
+        const sub = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        sub.setAttribute("x", p.x);
+        sub.setAttribute("y", height - padBottom + 32);
+        sub.setAttribute("text-anchor", "middle");
+        sub.setAttribute("font-size", "10");
+        sub.setAttribute("fill", "#64748b");
+        sub.textContent = p.d.roc_label;
+        svg.appendChild(sub);
+      });
+    }
+
+    function attachTooltipEvents(elem, pointData) {
+      elem.addEventListener("mouseenter", (e) => {
+        const tt = document.getElementById("chartTooltip");
+        const container = elem.closest("div");
+        const rect = container.getBoundingClientRect();
+
+        document.getElementById("ttQuarter").textContent = `${pointData.d.label} (${pointData.d.roc_year}年第${pointData.d.q.replace("Q","")}季)`;
+        document.getElementById("ttCurrentVal").textContent = `${pointData.val} (所選指標)`;
+        document.getElementById("ttTotal").textContent = `${pointData.d.total} 件`;
+        document.getElementById("ttA2").textContent = `${pointData.d.a2} 件`;
+        document.getElementById("ttA3").textContent = `${pointData.d.a3} 件`;
+        document.getElementById("ttInjured").textContent = `${pointData.d.injury} 人`;
+        document.getElementById("ttDeath").textContent = `${pointData.d.death} 人`;
+
+        tt.classList.remove("hidden");
+
+        const svgElem = document.getElementById("trendSvg");
+        const pt = svgElem.createSVGPoint();
+        pt.x = pointData.x;
+        pt.y = pointData.y;
+        const screenPt = pt.matrixTransform(svgElem.getScreenCTM());
+
+        const posX = screenPt.x - rect.left;
+        const posY = screenPt.y - rect.top;
+
+        tt.style.left = `${Math.min(Math.max(posX - 90, 10), rect.width - 200)}px`;
+        tt.style.top = `${Math.max(posY - 150, 10)}px`;
+      });
+
+      elem.addEventListener("mouseleave", () => {
+        document.getElementById("chartTooltip").classList.add("hidden");
+      });
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById("dataTableBody");
+      tbody.innerHTML = "";
+
+      data.forEach(d => {
+        const a2Rate = d.total > 0 ? (d.a2 / d.total * 100).toFixed(1) + "%" : "0%";
+        const avgInjured = d.a2 > 0 ? (d.injury / d.a2).toFixed(2) : "0.00";
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-800 transition";
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-semibold text-amber-400">${d.label}</td>
+          <td class="py-2.5 px-3 text-slate-400">${d.year} / ${d.roc_year}年</td>
+          <td class="py-2.5 px-3 text-right font-bold text-white">${d.total.toLocaleString()}</td>
+          <td class="py-2.5 px-3 text-right font-medium text-rose-400">${d.a1}</td>
+          <td class="py-2.5 px-3 text-right font-medium text-sky-400">${d.a2}</td>
+          <td class="py-2.5 px-3 text-right font-medium text-slate-300">${d.a3}</td>
+          <td class="py-2.5 px-3 text-right font-semibold text-rose-400">${d.death}</td>
+          <td class="py-2.5 px-3 text-right font-semibold text-amber-300">${d.injury}</td>
+          <td class="py-2.5 px-3 text-right text-sky-300">${a2Rate}</td>
+          <td class="py-2.5 px-3 text-right text-slate-400">${avgInjured}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function downloadFilteredCsv() {
+      const data = getFilteredData();
+      let csv = "\uFEFF統計季度,公曆年,民國年,總件數,A1類死亡件,A2類受傷件,A3類財損件,死亡人數,受傷人數,A2致傷率,件均傷患\n";
+      data.forEach(d => {
+        const a2Rate = d.total > 0 ? (d.a2 / d.total * 100).toFixed(1) + "%" : "0%";
+        const avgInjured = d.a2 > 0 ? (d.injury / d.a2).toFixed(2) : "0.00";
+        csv += `"${d.label}","${d.year}","${d.roc_year}","${d.total}","${d.a1}","${d.a2}","${d.a3}","${d.death}","${d.injury}","${a2Rate}","${avgInjured}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `臺中市外送員事故統計_${selectedYear}_${getActiveMetricKey()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      renderDashboard();
+    });
+  </script>
+</body>
+</html>
