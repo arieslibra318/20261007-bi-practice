@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#152419" />
+      <stop offset="100%" stop-color="#0e1710" />
+    </linearGradient>
+    <linearGradient id="wetBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#5a8a68" />
+      <stop offset="100%" stop-color="#7eb08c" />
+    </linearGradient>
+    <linearGradient id="dryBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c98a56" />
+      <stop offset="100%" stop-color="#e2aa7a" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12" />
+  
+  <!-- Subtle Grid & Borders -->
+  <rect x="24" y="24" width="752" height="452" fill="none" stroke="#2c4233" stroke-width="1" rx="8" />
+  <line x1="24" y1="84" x2="776" y2="84" stroke="#2c4233" stroke-width="1" stroke-dasharray="4,4" />
+  
+  <!-- Header Meta -->
+  <text x="50" y="58" fill="#8ba888" font-family="'IBM Plex Mono', monospace" font-size="12" letter-spacing="2.5">FIGURE 01 · FELINE EVOLUTIONARY BIOLOGY</text>
+  <text x="750" y="58" text-anchor="end" fill="#d8d3c5" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1.5">WATER METABOLISM</text>
+
+  <!-- Title & Intro -->
+  <text x="50" y="130" fill="#f5f1e8" font-family="'Playfair Display', serif" font-size="28" font-weight="700">The Hydration Dilemma</text>
+  <text x="50" y="156" fill="#a4baa7" font-family="'Noto Sans SC', sans-serif" font-size="13">非洲野貓演化而來的口渴鈍感，與現代高度濃縮乾糧的不可調和衝突</text>
+
+  <!-- Comparison Cards Container -->
+  <!-- Left Card: Natural Prey & Wet Food -->
+  <g transform="translate(50, 185)">
+    <rect width="330" height="250" fill="#1b2d20" rx="6" stroke="#37553f" stroke-width="1.2" />
+    <text x="24" y="38" fill="#7eb08c" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1.5">EVOLUTIONARY NORM</text>
+    <text x="24" y="68" fill="#f5f1e8" font-family="'Noto Serif SC', serif" font-size="18" font-weight="600">天然獵物與主食罐</text>
+    
+    <!-- Water Bar -->
+    <text x="24" y="112" fill="#d8d3c5" font-family="'Noto Sans SC', sans-serif" font-size="12">含水量 (Moisture Content)</text>
+    <text x="306" y="112" text-anchor="end" fill="#7eb08c" font-family="'Playfair Display', serif" font-size="16" font-weight="700">75% - 80%</text>
+    <rect x="24" y="124" width="282" height="12" rx="6" fill="#24382a" />
+    <rect x="24" y="124" width="220" height="12" rx="6" fill="url(#wetBar)" />
+
+    <!-- Insights -->
+    <circle cx="30" cy="165" r="3" fill="#7eb08c" />
+    <text x="42" y="169" fill="#c3d4c5" font-family="'Noto Sans SC', sans-serif" font-size="12">藉由進食自然攝取足量水分</text>
+    <circle cx="30" cy="192" r="3" fill="#7eb08c" />
+    <text x="42" y="196" fill="#c3d4c5" font-family="'Noto Sans SC', sans-serif" font-size="12">尿比重維持適中 (USG &lt; 1.035)</text>
+    <circle cx="30" cy="219" r="3" fill="#7eb08c" />
+    <text x="42" y="223" fill="#c3d4c5" font-family="'Noto Sans SC', sans-serif" font-size="12">自發性下泌尿道綜合症風險降低 60%</text>
+  </g>
+
+  <!-- Right Card: Dry Kibble -->
+  <g transform="translate(420, 185)">
+    <rect width="330" height="250" fill="#1e2620" rx="6" stroke="#483f33" stroke-width="1.2" />
+    <text x="24" y="38" fill="#e2aa7a" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1.5">MODERN CONVENIENCE</text>
+    <text x="24" y="68" fill="#f5f1e8" font-family="'Noto Serif SC', serif" font-size="18" font-weight="600">高度加工膨化乾飼料</text>
+    
+    <!-- Water Bar -->
+    <text x="24" y="112" fill="#d8d3c5" font-family="'Noto Sans SC', sans-serif" font-size="12">含水量 (Moisture Content)</text>
+    <text x="306" y="112" text-anchor="end" fill="#e2aa7a" font-family="'Playfair Display', serif" font-size="16" font-weight="700">8% - 10%</text>
+    <rect x="24" y="124" width="282" height="12" rx="6" fill="#292e27" />
+    <rect x="24" y="124" width="30" height="12" rx="6" fill="url(#dryBar)" />
+
+    <!-- Insights -->
+    <circle cx="30" cy="165" r="3" fill="#e2aa7a" />
+    <text x="42" y="169" fill="#c3d4c5" font-family="'Noto Sans SC', sans-serif" font-size="12">口渴中樞遲鈍，自發補水不足 50%</text>
+    <circle cx="30" cy="192" r="3" fill="#e2aa7a" />
+    <text x="42" y="196" fill="#c3d4c5" font-family="'Noto Sans SC', sans-serif" font-size="12">長期處於慢性輕度脫水狀態</text>
+    <circle cx="30" cy="219" r="3" fill="#e2aa7a" />
+    <text x="42" y="223" fill="#c3d4c5" font-family="'Noto Sans SC', sans-serif" font-size="12">尿液高度濃縮，結晶與結石成因</text>
+  </g>
+</svg>

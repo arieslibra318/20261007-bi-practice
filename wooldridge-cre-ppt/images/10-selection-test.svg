@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="testBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1f3d" />
+      <stop offset="100%" stop-color="#08182f" />
+    </linearGradient>
+    <linearGradient id="cardDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#132c4d" />
+      <stop offset="100%" stop-color="#0e213b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#testBg)" rx="10" />
+  <rect x="20" y="20" width="760" height="460" fill="none" stroke="#22426d" stroke-width="1.2" rx="6" />
+  <line x1="20" y1="78" x2="780" y2="78" stroke="#22426d" stroke-width="1" stroke-dasharray="3,3" />
+
+  <!-- Meta Header -->
+  <text x="44" y="52" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="2">DIAGNOSTIC SUITE · WOOLDRIDGE (2019) SECTION 6.1</text>
+  <text x="756" y="52" text-anchor="end" fill="#d0dfef" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1">SELECTION TESTS</text>
+
+  <!-- Title -->
+  <text x="44" y="118" fill="#f1f3f5" font-family="'Playfair Display', serif" font-size="24" font-weight="700">Testing Ignorability of Selection</text>
+  <text x="44" y="142" fill="#9dbcdb" font-family="'Noto Sans SC', sans-serif" font-size="12.5">檢定樣本選擇/流失是否與特異性衝擊 (Idiosyncratic Shocks) 相關</text>
+
+  <!-- 3 Testing Cards Grid -->
+  <g transform="translate(44, 168)">
+    <!-- Card 1: Lead Selection Indicator -->
+    <rect x="0" y="0" width="225" height="265" fill="url(#cardDark)" rx="6" stroke="#2b4f7f" stroke-width="1.2" />
+    <rect x="16" y="18" width="40" height="22" rx="3" fill="#1b3d68" />
+    <text x="36" y="33" text-anchor="middle" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="700">T1</text>
+    <text x="16" y="66" fill="#f1f3f5" font-family="'Noto Serif SC', serif" font-size="15" font-weight="700">未來選擇領先項</text>
+    <text x="16" y="86" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">LEAD SELECTION INDICATOR</text>
+    <line x1="16" y1="102" x2="209" y2="102" stroke="#1d3d63" stroke-width="1" />
+    <text x="16" y="128" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="12">變數添加: s_{i,t+1}</text>
+    <text x="16" y="156" fill="#c4d8ed" font-family="'Noto Sans SC', sans-serif" font-size="11.5" line-height="1.5">
+      在當期方程式中加入下一期的選擇指示標記 s_{i,t+1}，並檢定其顯著性。
+    </text>
+    <rect x="16" y="210" width="193" height="38" rx="4" fill="#08172c" />
+    <text x="26" y="234" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">H_0: 係數 = 0 (無回饋反饋)</text>
+  </g>
+
+  <!-- Card 2: Future Covariates Interaction -->
+  <g transform="translate(244, 0)">
+    <rect x="0" y="0" width="225" height="265" fill="url(#cardDark)" rx="6" stroke="#2b4f7f" stroke-width="1.2" />
+    <rect x="16" y="18" width="40" height="22" rx="3" fill="#1b3d68" />
+    <text x="36" y="33" text-anchor="middle" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="700">T2</text>
+    <text x="16" y="66" fill="#f1f3f5" font-family="'Noto Serif SC', serif" font-size="15" font-weight="700">未來協變數交互</text>
+    <text x="16" y="86" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">FUTURE COVARIATE LEADS</text>
+    <line x1="16" y1="102" x2="209" y2="102" stroke="#1d3d63" stroke-width="1" />
+    <text x="16" y="128" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="11.5">變數: (s_{i,t+1}, s_{i,t+1}x_{i,t+1})</text>
+    <text x="16" y="156" fill="#c4d8ed" font-family="'Noto Sans SC', sans-serif" font-size="11.5">
+      同時加入下一期選擇與協變數領先項，檢定未來衝擊是否驅動當期遺漏。
+    </text>
+    <rect x="16" y="210" width="193" height="38" rx="4" fill="#08172c" />
+    <text x="26" y="234" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">聯合 Wald 檢定 H_0: 向量 = 0</text>
+  </g>
+
+  <!-- Card 3: Remaining Periods -->
+  <g transform="translate(488, 0)">
+    <rect x="0" y="0" width="224" height="265" fill="url(#cardDark)" rx="6" stroke="#2b4f7f" stroke-width="1.2" />
+    <rect x="16" y="18" width="40" height="22" rx="3" fill="#1b3d68" />
+    <text x="36" y="33" text-anchor="middle" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="700">T3</text>
+    <text x="16" y="66" fill="#f1f3f5" font-family="'Noto Serif SC', serif" font-size="15" font-weight="700">剩餘觀測期數</text>
+    <text x="16" y="86" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">REMAINING PERIODS r_{it}</text>
+    <line x1="16" y1="102" x2="208" y2="102" stroke="#1d3d63" stroke-width="1" />
+    <text x="16" y="128" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="12">變數: r_{it} = \sum_{r&gt;t} s_{ir}</text>
+    <text x="16" y="156" fill="#c4d8ed" font-family="'Noto Sans SC', sans-serif" font-size="11.5">
+      加入單元在 t 期後仍被觀測的剩餘總期數，捕捉漸進式流失 (Attrition) 效應。
+    </text>
+    <rect x="16" y="210" width="192" height="38" rx="4" fill="#08172c" />
+    <text x="26" y="234" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">簡單 t 檢定即可驗證流失外生性</text>
+  </g>
+</svg>

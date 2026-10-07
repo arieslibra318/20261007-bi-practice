@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="probitBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1f3d" />
+      <stop offset="100%" stop-color="#07162b" />
+    </linearGradient>
+    <linearGradient id="stepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#122c4f" />
+      <stop offset="100%" stop-color="#0d203b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#probitBg)" rx="10" />
+  <rect x="20" y="20" width="760" height="460" fill="none" stroke="#22426d" stroke-width="1.2" rx="6" />
+  <line x1="20" y1="78" x2="780" y2="78" stroke="#22426d" stroke-width="1" stroke-dasharray="3,3" />
+
+  <!-- Meta Header -->
+  <text x="44" y="52" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="2">NONLINEAR CRE ESTIMATION · WOOLDRIDGE (2019) SECTION 6</text>
+  <text x="756" y="52" text-anchor="end" fill="#d0dfef" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1">HETEROSKEDASTIC PROBIT</text>
+
+  <!-- Title -->
+  <text x="44" y="118" fill="#f1f3f5" font-family="'Playfair Display', serif" font-size="24" font-weight="700">The Unbalanced Probit &amp; Fractional Framework</text>
+  <text x="44" y="142" fill="#9dbcdb" font-family="'Noto Sans SC', sans-serif" font-size="12.5">將個體異質性均值與方差參數化為期數 T_i 與均值 \bar{x}_i 的函數</text>
+
+  <!-- Equation & Architecture Cards -->
+  <g transform="translate(44, 168)">
+    <!-- Column 1: Mean & Variance Modeling -->
+    <rect x="0" y="0" width="340" height="265" fill="url(#stepGrad)" rx="6" stroke="#2a4e7e" stroke-width="1.2" />
+    <text x="20" y="32" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="600">STEP 01 · SPECIFY D(c_i | w_i)</text>
+    <text x="20" y="60" fill="#f1f3f5" font-family="'Noto Serif SC', serif" font-size="15" font-weight="700">條件分佈參數化</text>
+
+    <!-- Mean Formula -->
+    <rect x="18" y="78" width="304" height="66" rx="4" fill="#09182d" />
+    <text x="28" y="98" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">CONDITIONAL MEAN:</text>
+    <text x="28" y="126" fill="#f3e5ab" font-family="'IBM Plex Mono', monospace" font-size="11.5">E(c_i|w_i) = \sum \psi_r 1[T_i=r] + \sum 1[T_i=r]\bar{x}_i\xi_r</text>
+
+    <!-- Variance Formula -->
+    <rect x="18" y="156" width="304" height="66" rx="4" fill="#09182d" />
+    <text x="28" y="176" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">CONDITIONAL VARIANCE:</text>
+    <text x="28" y="204" fill="#f3e5ab" font-family="'IBM Plex Mono', monospace" font-size="11.5">Var(c_i|w_i) = exp(\tau + \sum \omega_r 1[T_i=r])</text>
+
+    <text x="20" y="248" fill="#a8c5e2" font-family="'Noto Sans SC', sans-serif" font-size="11">容許不同觀測期數組別具有異質相關與尺度差異</text>
+  </g>
+
+  <!-- Column 2: Software Implementation & APE -->
+  <g transform="translate(414, 168)">
+    <rect x="0" y="0" width="342" height="265" fill="url(#stepGrad)" rx="6" stroke="#2a4e7e" stroke-width="1.2" />
+    <text x="20" y="32" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="600">STEP 02 · ESTIMATION &amp; ASF</text>
+    <text x="20" y="60" fill="#f1f3f5" font-family="'Noto Serif SC', serif" font-size="15" font-weight="700">標準軟體直接估計</text>
+
+    <rect x="18" y="78" width="306" height="66" rx="4" fill="#09182d" />
+    <text x="28" y="98" fill="#7ba3d6" font-family="'IBM Plex Mono', monospace" font-size="10.5">POOLED HETEROSKEDASTIC PROBIT:</text>
+    <text x="28" y="126" fill="#d4af37" font-family="'IBM Plex Mono', monospace" font-size="12">P(y_it=1|x_it, w_i) = \Phi(Index_it / Scale_i)</text>
+
+    <!-- Key takeaways -->
+    <g transform="translate(20, 165)">
+      <circle cx="8" cy="8" r="3" fill="#d4af37" />
+      <text x="20" y="12" fill="#c4d8ed" font-family="'Noto Sans SC', sans-serif" font-size="11.5">無需自寫自定義 MLE，相容 Stata / R 內建指令</text>
+      
+      <circle cx="8" cy="38" r="3" fill="#d4af37" />
+      <text x="20" y="42" fill="#c4d8ed" font-family="'Noto Sans SC', sans-serif" font-size="11.5">透過平均結構函數 (ASF) 消除異質性求得 APE</text>
+
+      <circle cx="8" cy="68" r="3" fill="#d4af37" />
+      <text x="20" y="72" fill="#c4d8ed" font-family="'Noto Sans SC', sans-serif" font-size="11.5">個體聚類 Bootstrap (Panel Bootstrap) 估算標準誤</text>
+    </g>
+  </g>
+</svg>

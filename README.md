@@ -27,8 +27,27 @@
 ├── index.html            # 專案首頁 / 完整對戰遊戲入口 (包含完整 K 線引擎、卡牌系統與 3D 視覺)
 ├── tsmc_battle_game.html # 遊戲原始獨立檔案
 ├── dashboard.html        # 台中市外送員交通事故數據分析儀表板 (2022-2026)
+├── wooldridge-cre-ppt/   # 📊 Wooldridge (2019) CRE 非平衡面板計量文獻導讀網頁 PPT
+├── cat-healthcare-ppt/   # 🐱 貓咪日常健康與預防醫學指南網頁 PPT
 └── README.md             # 專案說明文件
 ```
+
+---
+
+## 網頁簡報展示 (Interactive Web Slide Decks)
+
+基於 `guizang-ppt-skill` 生成的單文件橫向翻頁高階雜誌風格 PPT：
+
+1. **📊 Wooldridge (2019) 計量經濟學論文導讀 PPT**
+   - **論文**: *Correlated random effects models with unbalanced panels* (*Journal of Econometrics*)
+   - **線上展示**: [https://arieslibra318.github.io/20261007-bi-practice/wooldridge-cre-ppt/](https://arieslibra318.github.io/20261007-bi-practice/wooldridge-cre-ppt/)
+   - **特點**: 12 頁學術深度剖析、Theorem 2.1 代數等價性推導、異方差 Probit 參數化、完全叢集穩健 Hausman 檢定、全配演講備忘稿（按 `P` 鍵開啟演講者雙屏視圖）。
+
+2. **🐱 貓咪日常健康與預防醫學指南 PPT**
+   - **主題**: 從演化天性到預防醫學的日常照護指南（風格 A · 森林墨）
+   - **線上展示**: [https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/](https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/)
+   - **特點**: 10 頁雜誌風格、FGS 痛覺表情量表五聯徵、雙軌流水線動效。
+
 
 ---
 
