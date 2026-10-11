@@ -1,1 +1,47 @@
 .agents/
+__pycache__/
+*.pyc
+
+# Scratch & intermediate audio files
+*.wav
+
+# Scratch scripts
+tts*.py
+test_*.py
+generate_*.py
+poll_*.py
+list_video_models.py
+process_video_pipeline.py
+video_generator.py
+create_*.py
+
+# Inspection & test folders
+inspect_crops/
+inspect_frames/
+inspect_timeline/
+verify_new_videos/
+verify_user_shots/
+fixed_preview/
+
+# Temporary frame dumps & test media
+frame_*.png
+s2_*.png
+s3_*.png
+*.tmp
+
+# Other non-deliverable test videos
+baseball_8bit_female_7s.mp4
+baseball_8bit_stage1_seedance_7s.mp4
+baseball_seedance_raw_7s.mp4
+baseball_stage2_seedance_raw_7s.mp4
+baseball_stage3_seedance_raw_7s.mp4
+happy_halloween_30s.mp4
+huashu_*
+human_voice_15s.mp4
+python_journey_long_scroll.mp4
+tsmc_8bit_*
+tsmc_battle_10s.mp4
+tsmc_battle_motion.html
+veo_dog_test.mp4
+伊布觀光.mp4
+時間塊排程與任務規劃表.docx

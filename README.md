@@ -1,11 +1,40 @@
-# 《護國神山：台積電ADR (TSM) 守護戰》 Cyber Trading Arena
+# 國立臺中科技大學 商業智慧與多媒體互動實作專案 (BI & Interactive Applications)
 
 > 國立臺中科技大學 資訊管理系 / 研究所 商業智慧課程課堂實作專案  
-> 線上試玩展示：[https://tsmc-adr-battle-arena.netlify.app](https://tsmc-adr-battle-arena.netlify.app)
+> 作者：[@arieslibra318](https://github.com/arieslibra318)  
+> 線上體驗與展示：
+> - ⚾ **《逆轉九局：魂之交鋒》8-Bit 像素棒球遊戲**：[`baseball_game.html`](baseball_game.html)
+> - 📈 **《護國神山：台積電ADR (TSM) 守護戰》**：[線上試玩 (Netlify)](https://tsmc-adr-battle-arena.netlify.app)
+> - 🐱 **貓咪日常健康與預防醫學指南 PPT**：[網頁簡報展示](https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/)
+> - 📊 **台中市外送員交通事故數據分析儀表板**：[`dashboard.html`](dashboard.html)
 
 ---
 
-## 專案簡介 (Introduction)
+## 專案一：⚾《逆轉九局：魂之交鋒》8-Bit 像素棒球節奏遊戲
+
+本專案為一款重現 1980 年代紅白機情懷的 **8-Bit 像素風棒球 QTE 節奏打擊網頁遊戲**。玩家扮演在第 9 局下半絕境中登場的關鍵打者，需抓準球路時機揮棒，啟動逆轉勝的史詩動畫！
+
+### 核心特色
+1. **三階段動態球路與高精度 QTE 判定系統**：
+   - **Stage 1 (滿壘落後一分)**：直球對決，揮出逆轉清壘二壘打（判定寬度 240ms）。
+   - **Stage 2 (落後一分僵局)**：變速球與外角滑球，精準打擊追平比分（判定寬度 160ms）。
+   - **Stage 3 (落後三分滿壘生死局)**：極限指叉球，抓準紅心擊出「再見滿貫全壘打 (Walk-off Grand Slam)」（判定寬度 110ms）。
+2. **多媒體過場劇院 (Cinematic Cutscenes)**：
+   - 整合 3 組精緻 8-Bit 動態過場影片（1080p / 7秒）：
+     - `baseball_8bit_stage1_female_7s.mp4`：3:2 滿壘逆轉安打過場，清脆擊球音效與清壘跑壘。
+     - `baseball_8bit_stage2_female_7s.mp4`：4:3 關鍵二壘安打過場（白色打擊手套、全螢幕像素卡片）。
+     - `baseball_8bit_stage3_grandslam_7s.mp4`：7:5 再見滿貫全壘打過場（左上角即時記分板 HUD 與煙火歡呼）。
+   - 內建高燃女聲熱血台詞語音與「鏘！！」、「轟！！」清脆金屬球棒打擊音效。
+3. **原生 Web Audio API 復古合成音效**：
+   - 零外部音效檔依賴，瀏覽器動態合成投球風聲、揮棒落空低鳴、完美擊球音與勝利號角。
+4. **完整企劃書與 10 大問題 RCA 修正報告**：
+   - 完整記錄遊戲系統架構、影音流水線生成、字幕版型調優、字型疊代與歷程覆盤：
+     - Markdown 完整企劃：[`baseball_game_proposal.md`](baseball_game_proposal.md)
+     - Word 報告版：[`棒球遊戲企劃書_逆轉九局魂之交鋒.docx`](棒球遊戲企劃書_逆轉九局魂之交鋒.docx) / [`baseball_game_proposal.docx`](baseball_game_proposal.docx)
+
+---
+
+## 專案二：📈《護國神山：台積電ADR (TSM) 守護戰》 Cyber Trading Arena
 
 本專案是以**台灣半導體權值王「台積電 ADR (TSM)」美股即時行情為背景**所打造的 Web 卡牌對抗對決與即時走勢圖互動系統。
 
@@ -20,43 +49,34 @@
 
 ---
 
-## 專案架構 (Project Structure)
+## 專案目錄結構 (Project Structure)
 
 ```
 .
-├── index.html            # 專案首頁 / 完整對戰遊戲入口 (包含完整 K 線引擎、卡牌系統與 3D 視覺)
-├── tsmc_battle_game.html # 遊戲原始獨立檔案
-├── dashboard.html        # 台中市外送員交通事故數據分析儀表板 (2022-2026)
-├── wooldridge-cre-ppt/   # 📊 Wooldridge (2019) CRE 非平衡面板計量文獻導讀網頁 PPT
-├── cat-healthcare-ppt/   # 🐱 貓咪日常健康與預防醫學指南網頁 PPT
-└── README.md             # 專案說明文件
+├── baseball_game.html                     # ⚾ 8-Bit 像素棒球遊戲主程式
+├── baseball_8bit_stage1_female_7s.mp4    # 關卡一：3:2 滿壘逆轉安打過場影片
+├── baseball_8bit_stage2_female_7s.mp4    # 關卡二：4:3 追平二壘安打過場影片
+├── baseball_8bit_stage3_grandslam_7s.mp4 # 關卡三：7:5 再見滿貫全壘打過場影片
+├── baseball_game_proposal.md             # 棒球遊戲完整企劃書與 10 大問題 RCA 覆盤 (Markdown)
+├── 棒球遊戲企劃書_逆轉九局魂之交鋒.docx     # 棒球遊戲企劃書 Word 專業排版檔
+├── baseball_game_proposal.docx            # 棒球遊戲企劃書 Word 檔案 (ASCII 名稱相容)
+├── index.html                             # 📈 台積電 ADR 守護戰首頁 / 完整對戰遊戲入口
+├── tsmc_battle_game.html                  # 遊戲原始獨立檔案
+├── dashboard.html                         # 📊 台中市外送員交通事故數據分析儀表板
+├── cat-healthcare-ppt/                    # 🐱 貓咪日常健康與預防醫學指南網頁 PPT
+└── README.md                              # 專案說明文件
 ```
-
----
-
-## 網頁簡報展示 (Interactive Web Slide Decks)
-
-基於 `guizang-ppt-skill` 生成的單文件橫向翻頁高階雜誌風格 PPT：
-
-1. **📊 Wooldridge (2019) 計量經濟學論文導讀 PPT**
-   - **論文**: *Correlated random effects models with unbalanced panels* (*Journal of Econometrics*)
-   - **線上展示**: [https://arieslibra318.github.io/20261007-bi-practice/wooldridge-cre-ppt/](https://arieslibra318.github.io/20261007-bi-practice/wooldridge-cre-ppt/)
-   - **特點**: 12 頁學術深度剖析、Theorem 2.1 代數等價性推導、異方差 Probit 參數化、完全叢集穩健 Hausman 檢定、全配演講備忘稿（按 `P` 鍵開啟演講者雙屏視圖）。
-
-2. **🐱 貓咪日常健康與預防醫學指南 PPT**
-   - **主題**: 從演化天性到預防醫學的日常照護指南（風格 A · 森林墨）
-   - **線上展示**: [https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/](https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/)
-   - **特點**: 10 頁雜誌風格、FGS 痛覺表情量表五聯徵、雙軌流水線動效。
-
 
 ---
 
 ## 快速啟動 (Quick Start)
 
-本專案為零外部套件依賴的純前端 Single Page Application (SPA)，支援任意現代瀏覽器：
+本專案所有遊戲與頁面皆為零外部重型套件依賴的純前端 Single Page Application (SPA)，支援任意現代瀏覽器：
 
 ### 方法一：直接本機開啟
-直接雙擊點開 `index.html`，即可於 Chrome、Edge、Safari 或 Firefox 中暢玩。
+直接以瀏覽器雙擊點開：
+- `baseball_game.html` 暢玩 8-Bit 棒球遊戲
+- `index.html` 暢玩台積電 ADR 守護戰
 
 ### 方法二：透過本機 HTTP 伺服器
 ```bash
@@ -66,13 +86,14 @@ python -m http.server 8000
 # 或使用 Node.js npx serve
 npx serve .
 ```
-開啟瀏覽器前往 `http://localhost:8000` 即可。
+開啟瀏覽器前往 `http://localhost:8000/baseball_game.html` 或 `http://localhost:8000` 即可。
 
 ---
 
 ## 技術棧 (Tech Stack)
 
-* **Core**: Vanilla JavaScript (ES6+), HTML5 Canvas 2D / 3D
-* **Styling**: Tailwind CSS CDN, Cyberpunk Dark UI Design
-* **Audio**: Web Audio API (免載入外部音效檔，原生合成音頻)
-* **Deployment**: Netlify / GitHub Pages
+* **Core**: Vanilla JavaScript (ES6+), HTML5 Canvas 2D / 3D, HTML5 Video API
+* **Styling**: Tailwind CSS CDN, Retro 8-Bit Pixel Art CSS, Cyberpunk Dark UI Design
+* **Audio**: Web Audio API (免載入外部音訊套件，原生振盪器合成音頻)
+* **Media AI**: Seedance & 8-Bit Pixel Art Video Generation Pipeline
+* **Deployment**: GitHub Pages / Netlify

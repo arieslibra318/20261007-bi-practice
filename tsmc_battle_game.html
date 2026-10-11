@@ -1143,45 +1143,196 @@
 
     .hand-cards-row {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       overflow-x: auto;
-      padding-bottom: 2px;
+      padding: 4px 2px 8px 2px;
+      scrollbar-width: thin;
+    }
+    .hand-cards-row::-webkit-scrollbar {
+      height: 4px;
+    }
+    .hand-cards-row::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 2px;
     }
 
     .skill-card {
-      width: 130px;
-      height: 145px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, #151d30 0%, #0d1320 100%);
-      border: 1px solid var(--border-color);
-      padding: 8px 6px;
+      width: 148px;
+      min-height: 172px;
+      border-radius: 12px;
+      padding: 8px 8px 7px 8px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       cursor: pointer;
       position: relative;
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+      border: 1.5px solid #22304f;
+      overflow: hidden;
+      background: #111726;
+      user-select: none;
     }
 
     .skill-card:hover {
-      transform: translateY(-8px) scale(1.04);
-      border-color: var(--accent-cyan);
-      box-shadow: 0 10px 25px rgba(0, 243, 255, 0.35);
+      transform: translateY(-8px) scale(1.03);
+      z-index: 5;
+    }
+
+    /* 多樣化卡牌風格 (Themes & Archetypes) */
+    /* 1. 金碧輝煌·傳奇金卡 (Legendary Gold) */
+    .skill-card.theme-gold {
+      background: linear-gradient(165deg, #2b1f09 0%, #151109 60%, #3d2c0b 100%);
+      border-color: #f59e0b;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25), inset 0 0 12px rgba(245, 158, 11, 0.15);
+    }
+    .skill-card.theme-gold:hover {
+      box-shadow: 0 12px 28px rgba(245, 158, 11, 0.55), inset 0 0 16px rgba(254, 240, 138, 0.3);
+      border-color: #fef08a;
+    }
+
+    /* 2. 紫電青霜·史詩科技 (Cyber Violet) */
+    .skill-card.theme-violet {
+      background: linear-gradient(165deg, #231138 0%, #11091e 60%, #371856 100%);
+      border-color: #a855f7;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25), inset 0 0 12px rgba(168, 85, 247, 0.15);
+    }
+    .skill-card.theme-violet:hover {
+      box-shadow: 0 12px 28px rgba(168, 85, 247, 0.55), inset 0 0 16px rgba(233, 213, 255, 0.3);
+      border-color: #c084fc;
+    }
+
+    /* 3. 烈火燎原·狂飆赤紅 (Hyper Bull Red) */
+    .skill-card.theme-crimson {
+      background: linear-gradient(165deg, #350f19 0%, #18060b 60%, #4a1320 100%);
+      border-color: #ff3358;
+      box-shadow: 0 4px 15px rgba(255, 51, 88, 0.28), inset 0 0 12px rgba(255, 51, 88, 0.15);
+    }
+    .skill-card.theme-crimson:hover {
+      box-shadow: 0 12px 28px rgba(255, 51, 88, 0.6), inset 0 0 16px rgba(255, 180, 190, 0.3);
+      border-color: #ff6b87;
+    }
+
+    /* 4. 固若金湯·翡翠神盾 (Emerald Shield) */
+    .skill-card.theme-emerald {
+      background: linear-gradient(165deg, #09261a 0%, #05140d 60%, #0e3b28 100%);
+      border-color: #10b981;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25), inset 0 0 12px rgba(16, 185, 129, 0.15);
+    }
+    .skill-card.theme-emerald:hover {
+      box-shadow: 0 12px 28px rgba(16, 185, 129, 0.55), inset 0 0 16px rgba(167, 243, 208, 0.3);
+      border-color: #34d399;
+    }
+
+    /* 5. 風起雲湧·量子蔚藍 (Quantum Azure) */
+    .skill-card.theme-azure {
+      background: linear-gradient(165deg, #0d2847 0%, #061426 60%, #123d6b 100%);
+      border-color: #00f3ff;
+      box-shadow: 0 4px 15px rgba(0, 243, 255, 0.25), inset 0 0 12px rgba(0, 243, 255, 0.15);
+    }
+    .skill-card.theme-azure:hover {
+      box-shadow: 0 12px 28px rgba(0, 243, 255, 0.55), inset 0 0 16px rgba(186, 247, 255, 0.3);
+      border-color: #67e8f9;
+    }
+
+    /* 6. 乾坤挪移·幻彩神話 (Mythic Prism) */
+    .skill-card.theme-prism {
+      background: linear-gradient(165deg, #281432 0%, #0e1224 50%, #221b08 100%);
+      border-color: #ec4899;
+      box-shadow: 0 4px 18px rgba(236, 72, 153, 0.3), inset 0 0 15px rgba(0, 243, 255, 0.2);
+      animation: prismBorderAnim 4s linear infinite alternate;
+    }
+    @keyframes prismBorderAnim {
+      0% { border-color: #ec4899; box-shadow: 0 4px 18px rgba(236, 72, 153, 0.4); }
+      33% { border-color: #00f3ff; box-shadow: 0 4px 18px rgba(0, 243, 255, 0.4); }
+      66% { border-color: #fbbf24; box-shadow: 0 4px 18px rgba(251, 191, 36, 0.4); }
+      100% { border-color: #a855f7; box-shadow: 0 4px 18px rgba(168, 85, 247, 0.4); }
+    }
+    .skill-card.theme-prism:hover {
+      transform: translateY(-8px) scale(1.05);
+    }
+
+    /* 卡牌流光動畫 (Foil Sheen) */
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      top: -70%;
+      left: -70%;
+      width: 240%;
+      height: 240%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.09) 50%, transparent 60%);
+      transform: rotate(25deg);
+      pointer-events: none;
+      transition: transform 0.6s ease;
+    }
+    .skill-card:hover::after {
+      transform: rotate(25deg) translate(25%, 25%);
     }
 
     .skill-card.cost-disabled {
       opacity: 0.45;
-      filter: grayscale(0.7);
+      filter: grayscale(0.75);
       cursor: not-allowed;
       transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* 卡牌頭部佈局 (印章 + 費用) */
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+
+    /* 成語印章標籤 (Idiom Seal Stamp) */
+    .card-idiom-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 9.5px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(225, 29, 72, 0.25);
+      border: 1px solid rgba(255, 77, 109, 0.5);
+      color: #ffe4e6;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      box-shadow: 0 0 6px rgba(225, 29, 72, 0.3);
+    }
+    .theme-gold .card-idiom-badge {
+      background: rgba(180, 83, 9, 0.35);
+      border-color: #f59e0b;
+      color: #fef08a;
+      box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+    }
+    .theme-violet .card-idiom-badge {
+      background: rgba(107, 33, 168, 0.35);
+      border-color: #c084fc;
+      color: #f3e8ff;
+      box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
+    }
+    .theme-emerald .card-idiom-badge {
+      background: rgba(6, 78, 59, 0.45);
+      border-color: #34d399;
+      color: #d1fae5;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+    }
+    .theme-azure .card-idiom-badge {
+      background: rgba(14, 116, 144, 0.35);
+      border-color: #22d3ee;
+      color: #cffafe;
+      box-shadow: 0 0 6px rgba(0, 243, 255, 0.4);
+    }
+    .theme-prism .card-idiom-badge {
+      background: rgba(190, 24, 93, 0.35);
+      border-color: #f472b6;
+      color: #fdf2f8;
+      box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
     }
 
     .card-cost {
-      position: absolute;
-      top: 5px;
-      right: 5px;
       width: 20px;
       height: 20px;
       border-radius: 50%;
@@ -1193,12 +1344,31 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+      flex-shrink: 0;
+    }
+
+    .card-icon-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin: 2px 0 3px 0;
     }
 
     .card-icon {
-      font-size: 26px;
-      margin-bottom: 4px;
+      font-size: 24px;
       text-align: center;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+    }
+
+    .card-type-tag {
+      font-size: 8px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      letter-spacing: 0.3px;
     }
 
     .card-name {
@@ -1206,15 +1376,32 @@
       font-weight: 800;
       text-align: center;
       color: #fff;
-      line-height: 1.2;
+      line-height: 1.25;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
+
+    .card-quote {
+      font-size: 8px;
+      font-style: italic;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.2;
+      margin: 2px 0;
+      letter-spacing: 0.3px;
+    }
+    .theme-gold .card-quote { color: #fde68a; }
+    .theme-violet .card-quote { color: #e9d5ff; }
+    .theme-crimson .card-quote { color: #fca5a5; }
+    .theme-emerald .card-quote { color: #a7f3d0; }
+    .theme-azure .card-quote { color: #a5f3fc; }
+    .theme-prism .card-quote { color: #fbcfe8; }
 
     .card-rarity {
       font-size: 8px;
       padding: 1px 4px;
       border-radius: 3px;
       align-self: center;
-      margin-top: 2px;
+      margin-top: 1px;
       font-weight: 900;
       letter-spacing: 0.5px;
     }
@@ -1225,15 +1412,29 @@
     .rarity-legend { background: #78350f; color: #fde68a; border: 1px solid #f59e0b; }
 
     .card-desc {
-      font-size: 9px;
+      font-size: 8.5px;
       color: var(--text-muted);
       line-height: 1.25;
       text-align: center;
-      margin-top: 3px;
+      margin-top: 2px;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+    }
+
+    /* 戰情室出牌印章效果 */
+    .banner-idiom-stamp {
+      display: inline-block;
+      color: #fef08a;
+      background: rgba(225, 29, 72, 0.45);
+      border: 1px solid #f59e0b;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 900;
+      margin-right: 6px;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
     }
 
     /* 結算彈窗 */
@@ -1304,9 +1505,9 @@
     <div class="player-profile">
       <div class="avatar-box">🇹🇼</div>
       <div class="info-col">
-        <span class="role-title">散戶多頭統帥 (YOU)</span>
+        <span class="role-title">國安基金操盤手 (YOU)</span>
         <div class="name-line">
-          <span>本多終勝</span>
+          <span>國家金融安定基金專戶</span>
           <span class="fund-val" id="playerFundsDisplay">NT$ 10,000,000</span>
         </div>
       </div>
@@ -1318,14 +1519,14 @@
         <span>台積電ADR</span>
         <span class="free-vol-badge">美股無漲跌限制</span>
       </div>
-      <div class="round-timer" id="roundTimer">關卡 1：外資禿鷹決戰 ⏳ 02:30</div>
+      <div class="round-timer" id="roundTimer">關卡 1：外資借券決戰 ⏳ 02:30</div>
     </div>
 
     <div class="boss-profile">
       <div class="info-col" style="text-align: right;">
         <span class="role-title">華爾街空頭旗艦 (BOSS)</span>
         <div class="name-line" style="justify-content: flex-end;">
-          <span class="boss-fund" id="bossFundsDisplay">NT$ 35,000,000</span>
+          <span class="boss-fund" id="bossFundsDisplay">NT$ 45,000,000</span>
           <span>高盛量化黑石</span>
         </div>
         <div class="boss-hp-bar">
@@ -1557,8 +1758,12 @@
           <div class="c-stat-val" id="posPnlVal">NT$ 0</div>
         </div>
         <div>
-          <div class="c-stat-label">爆倉清算價</div>
+          <div class="c-stat-label">強制平倉警戒線</div>
           <div class="c-stat-val" id="posLiqVal" style="color:#ff0033;">--</div>
+        </div>
+        <div>
+          <div class="c-stat-label">國安基金護盤額度</div>
+          <div class="c-stat-val" id="posShieldVal" style="color:#10b981;font-size:12px;">🛡️ 3/3 次緊急托底</div>
         </div>
       </div>
 
@@ -1572,39 +1777,39 @@
         <button class="lev-btn" onclick="setLeverage(20, this)">20x</button>
       </div>
 
-      <!-- 操作按鈕群 -->
+      <!-- 操作按鈕群 (專業財金交易風格) -->
       <div class="order-actions-wrap">
         <div class="primary-trade-btns" id="noPosActions">
           <button class="trade-btn btn-long" onclick="openPosition('LONG')">
-            <span>▲ 做多買進 (LONG)</span>
-            <span style="font-size:10px;opacity:0.85;font-weight:normal;">動用 35% 資金搶進</span>
+            <span>▲ 融資買進 / 做多 (LONG)</span>
+            <span style="font-size:10px;opacity:0.85;font-weight:normal;">動用 35% 資金建倉買進</span>
           </button>
           <button class="trade-btn btn-short" onclick="openPosition('SHORT')">
-            <span>▼ 融券做空 (SHORT)</span>
-            <span style="font-size:10px;opacity:0.85;font-weight:normal;">看空放空外資禿鷹</span>
+            <span>▼ 融券賣出 / 放空 (SHORT)</span>
+            <span style="font-size:10px;opacity:0.85;font-weight:normal;">動用 35% 資金融券放空</span>
           </button>
         </div>
 
         <div class="pyramid-actions-bar" id="posActiveActions" style="display: none;">
           <button class="pyramid-btn add-btn" onclick="addPosition(1000)">
-            <span>➕ 加碼</span>
+            <span>➕ 加碼買進</span>
             <span style="font-size:9px;color:var(--text-muted);">+1,000股</span>
           </button>
           <button class="pyramid-btn add-btn" onclick="addPosition(3000)">
-            <span>🚀 暴加</span>
+            <span>➕ 大額加碼</span>
             <span style="font-size:9px;color:var(--text-muted);">+3,000股</span>
           </button>
           <button class="pyramid-btn trim-btn" onclick="trimPosition(0.5)">
-            <span>✂️ 減碼半數</span>
-            <span style="font-size:9px;color:var(--text-muted);">獲利落袋50%</span>
+            <span>✂️ 調節減碼</span>
+            <span style="font-size:9px;color:var(--text-muted);">調節 50% 部位</span>
           </button>
           <button class="pyramid-btn reverse-btn" onclick="reversePosition()">
-            <span>🔄 反手翻倉</span>
-            <span style="font-size:9px;color:var(--text-muted);">多空順勢切換</span>
+            <span>🔄 多空反手</span>
+            <span style="font-size:9px;color:var(--text-muted);">部位反轉翻倉</span>
           </button>
           <button class="pyramid-btn close-btn" onclick="closePosition()">
             <span>🛑 全數平倉</span>
-            <span style="font-size:9px;color:var(--text-muted);">即刻鎖定損益</span>
+            <span style="font-size:9px;color:var(--text-muted);">市價結清部位</span>
           </button>
         </div>
       </div>
@@ -1726,9 +1931,11 @@
        ========================================================= */
     const GAME = {
       stage: 1,
-      playerFunds: 10000000, // 初始 1,000 萬新台幣
-      bossFunds: 35000000,   // 第一關外資資金池 3,500 萬
-      bossMaxFunds: 35000000,
+      playerFunds: 10000000, // 初始 1,000 萬新台幣 (護國神山本錢)
+      bossFunds: 45000000,   // 第一關外資資金池 4,500 萬 (沉穩博弈)
+      bossMaxFunds: 45000000,
+      antiLiqShields: 3,     // 主力防爆倉托底保險 (3層金城湯池，不易爆倉)
+      maxAntiLiqShields: 3,
       currentPrice: 985.0,   // 每股價格 (無漲跌幅限制)
       prevClose: 970.0,
       timeLeft: 150,
@@ -1804,11 +2011,16 @@
       }
     ];
 
-    /* 技能卡牌庫定義 (包含截圖同款馬斯克推文、黃仁勳急單等) */
+    /* 技能卡牌庫定義 (多變樣式、成語修飾、防爆倉托底) */
     const CARD_LIBRARY = [
       {
         id: 'elon_tweets',
         name: '馬斯克推文',
+        idiom: '一字千金',
+        quote: '千金一諾，狂瀾奔湧',
+        theme: 'theme-crimson',
+        cardType: 'attack',
+        typeLabel: '⚔️ 狂飆突擊',
         enTitle: 'ELON TWEETS',
         issuer: '◆ 莊家發動了世界層級推文',
         location: '📍 德州奧斯汀 · Austin',
@@ -1817,21 +2029,26 @@
         cost: 3,
         rarity: 'legend',
         rarityName: '傳奇 (LEGEND)',
-        desc: '「Doge to the Moon!」馬斯克突發推文引爆全市場投機狂潮，爆拉每股 +20~40 元！',
+        desc: '「Doge to the Moon!」突發推文引爆投機狂潮，爆拉每股 +20~35 元！',
         color: '#ff3358',
         action: () => {
-          const pump = Math.floor(Math.random() * 21) + 20;
+          const pump = Math.floor(Math.random() * 16) + 20;
           injectTick(pump);
-          damageBoss(8000000);
-          spawnVfxExplosion('🐶 馬斯克推文', `+${pump}.0 元`, '#ff3358');
+          damageBoss(6500000);
+          spawnVfxExplosion('🐶【一字千金】馬斯克推文', `+${pump}.0 元`, '#ff3358');
           spawnCoinsRain(35);
           SFX.pump();
-          addNews(`【推特暴動】馬斯克發布柴犬戴晶圓頭盔自拍，市場狂熱情緒噴發！股價暴衝 +${pump} 元！`, 'bull');
+          addNews(`【一字千金】馬斯克推特引爆市場狂熱！股價如脫韁野馬暴衝 +${pump} 元！`, 'bull');
         }
       },
       {
         id: 'jensen_order',
         name: '黃仁勳 AI 急單',
+        idiom: '風起雲湧',
+        quote: '如日中天，雷霆萬鈞',
+        theme: 'theme-violet',
+        cardType: 'attack',
+        typeLabel: '⚡ 雷霆急攻',
         enTitle: 'JENSEN HUANG AI SURGE',
         issuer: '◆ 輝達總部發佈了超級投片指令',
         location: '📍 加州聖塔克拉拉 · Santa Clara',
@@ -1840,87 +2057,56 @@
         cost: 3,
         rarity: 'epic',
         rarityName: '史詩 (EPIC)',
-        desc: '「In Jensen We Trust!」灌入 2,000 萬股大買盤，每股飆漲 +18~35 元，無漲跌限制！',
+        desc: '「In Jensen We Trust!」灌入 2,000 萬股大買盤，每股飆漲 +18~30 元！',
         color: '#ffb800',
         action: () => {
-          const pump = Math.floor(Math.random() * 18) + 18;
+          const pump = Math.floor(Math.random() * 13) + 18;
           injectTick(pump);
-          damageBoss(7000000);
-          spawnVfxExplosion('🧥 黃仁勳急單', `+${pump}.0 元`, '#00f3ff');
+          damageBoss(6000000);
+          spawnVfxExplosion('🧥【風起雲湧】黃仁勳急單', `+${pump}.0 元`, '#c084fc');
           spawnCoinsRain(30);
           SFX.pump();
-          addNews(`【重磅急單】黃仁勳在矽谷展示全新 GPU，追加台積電ADR (TSM) 2,000 萬股投片！股價飆漲 +${pump} 元！`, 'bull');
-        }
-      },
-      {
-        id: 'w_bottom',
-        name: 'W 底突破型態',
-        enTitle: 'DOUBLE BOTTOM BREAKOUT',
-        issuer: '◆ 華爾街技術派發動了頸線突破',
-        location: '📍 紐約華爾街 · Wall Street',
-        actionTag: '技術突破!!',
-        icon: '📈',
-        cost: 3,
-        rarity: 'epic',
-        rarityName: '史詩 (EPIC)',
-        desc: '技術面雙底成形！畫面上勾勒 W 底連線，突破頸線引發技術性買盤大噴出！',
-        color: '#ffd166',
-        action: () => {
-          GAME.doubleBottomActive = true;
-          setTimeout(() => { GAME.doubleBottomActive = false; }, 12000);
-          injectTick(15);
-          damageBoss(4000000);
-          spawnVfxExplosion('📈 W 底突破', '技術突破頸線', '#ffd166');
-          SFX.pump();
-          addNews('【技術突破】台積電ADR (TSM) 每股 K 線強勢打出標準雙底（W 底），突破頸線大暴漲！', 'bull');
-        }
-      },
-      {
-        id: 'buffett_buy',
-        name: '巴菲特神秘建倉',
-        enTitle: 'BUFFETT ACCUMULATION',
-        issuer: '◆ 奧馬哈先知揭露了重磅持倉',
-        location: '📍 內布拉斯加奧馬哈 · Omaha',
-        actionTag: '價值回歸!!',
-        icon: '💎',
-        cost: 4,
-        rarity: 'legend',
-        rarityName: '傳奇 (LEGEND)',
-        desc: '波克夏申報 13F 報告！大舉建倉台積電 ADR，全球主權基金全面追價 +25 元！',
-        color: '#00f3ff',
-        action: () => {
-          injectTick(25);
-          damageBoss(6500000);
-          spawnVfxExplosion('💎 巴菲特建倉', '+25.0 元', '#00f3ff');
-          spawnCoinsRain(40);
-          SFX.pump();
-          addNews('【重磅持倉】波克夏公布最新持股，台積電重回核心持股，空頭主力嚇破膽瘋狂回補！', 'bull');
+          addNews(`【風起雲湧】黃仁勳追加台積電 2,000 萬股急單！股價如大江東去飆漲 +${pump} 元！`, 'bull');
         }
       },
       {
         id: 'national_fund',
         name: '國安基金進場',
+        idiom: '固若金湯',
+        quote: '金城湯池，力挽狂瀾',
+        theme: 'theme-emerald',
+        cardType: 'defense',
+        typeLabel: '🛡️ 金城防禦',
         enTitle: 'NATIONAL DEFENSE FUND',
         issuer: '◆ 八大公股行庫啟動了無敵托底',
         location: '📍 台北重慶南路 · Taipei',
         actionTag: '護國神山!!',
         icon: '🛡️',
-        cost: 4,
+        cost: 3,
         rarity: 'legend',
         rarityName: '傳奇 (LEGEND)',
-        desc: '召喚國家隊護盤！開啟 15 秒跌幅防護罩，急跌自動湧入萬股托底！',
-        color: '#ff4d6d',
+        desc: '國家隊護盤！開啟 15 秒免疫砸盤護罩，並直接恢復 1 層主力防爆盾！',
+        color: '#10b981',
         action: () => {
           GAME.shieldActive = true;
           setTimeout(() => { GAME.shieldActive = false; }, 15000);
-          spawnVfxExplosion('🛡️ 國安基金護盤', '無敵托底 15 秒', '#ff3358');
+          if (GAME.antiLiqShields < GAME.maxAntiLiqShields) {
+            GAME.antiLiqShields++;
+            updateUI();
+          }
+          spawnVfxExplosion('🛡️【固若金湯】國安基金護盤', '無敵托底 + 恢復防爆盾', '#10b981');
           SFX.pump();
-          addNews('【盤中動態】八大公股行庫聯手進場護盤，買單高掛五檔，空方難越雷池一步！', 'bull');
+          addNews('【固若金湯】八大公股聯手托底，買單高掛五檔，主力防爆盾恢復 1 層！', 'bull');
         }
       },
       {
         id: 'morris_speech',
         name: '張忠謀大師精神',
+        idiom: '定海神針',
+        quote: '卓爾不群，高瞻遠矚',
+        theme: 'theme-gold',
+        cardType: 'buff',
+        typeLabel: '👑 中流砥柱',
         enTitle: 'MORRIS CHANG SPEECH',
         issuer: '◆ 半導體教父發表了世紀宣言',
         location: '📍 新竹科學園區 · Hsinchu',
@@ -1929,18 +2115,78 @@
         cost: 3,
         rarity: 'epic',
         rarityName: '史詩 (EPIC)',
-        desc: '「全球化已死，但台積電無可取代！」15 秒內多頭推力 +100%！',
-        color: '#ffb800',
+        desc: '「全球化已死，台積電無可取代！」15 秒內多頭推力 +100%！',
+        color: '#f59e0b',
         action: () => {
           GAME.speedBoostUntil = Date.now() + 15000;
-          spawnVfxExplosion('🎙️ 張忠謀心法', '多頭推力 +100%', '#ffd166');
+          spawnVfxExplosion('🎙️【定海神針】張忠謀心法', '多頭推力 +100%', '#fbbf24');
           SFX.pump();
-          addNews('【外電專訪】張忠謀指出台積電技術領先三星與Intel至少三代，市場信心全面引爆！', 'bull');
+          addNews('【定海神針】張忠謀指出台積電技術獨步全球，如中流砥柱引爆全場信心！', 'bull');
+        }
+      },
+      {
+        id: 'buffett_buy',
+        name: '巴菲特神秘建倉',
+        idiom: '點石成金',
+        quote: '慧眼識珠，潛龍騰淵',
+        theme: 'theme-gold',
+        cardType: 'ultimate',
+        typeLabel: '🌟 天命價值',
+        enTitle: 'BUFFETT ACCUMULATION',
+        issuer: '◆ 奧馬哈先知揭露了重磅持倉',
+        location: '📍 內布拉斯加奧馬哈 · Omaha',
+        actionTag: '價值回歸!!',
+        icon: '💎',
+        cost: 4,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '波克夏申報 13F 報告！大舉建倉台積電，主權基金追價 +22 元！',
+        color: '#00f3ff',
+        action: () => {
+          injectTick(22);
+          damageBoss(5500000);
+          spawnVfxExplosion('💎【點石成金】巴菲特建倉', '+22.0 元', '#f59e0b');
+          spawnCoinsRain(40);
+          SFX.pump();
+          addNews('【點石成金】波克夏大舉建倉台積電，全球主權基金聞風而動全面搶進！', 'bull');
+        }
+      },
+      {
+        id: 'short_squeeze',
+        name: '外資認錯回補',
+        idiom: '倒戈卸甲',
+        quote: '摧枯拉朽，落荒而逃',
+        theme: 'theme-crimson',
+        cardType: 'attack',
+        typeLabel: '💥 絕命軋空',
+        enTitle: 'MASSIVE SHORT SQUEEZE',
+        issuer: '◆ 華爾街量化觸發了連環砍倉',
+        location: '📍 紐約高盛交易室 · New York',
+        actionTag: '連環軋空!!',
+        icon: '💥',
+        cost: 4,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '空頭融券大踩踏！對手直接扣除 18% 資金池，並噴出長紅 +22 元！',
+        color: '#ff3358',
+        action: () => {
+          const dmg = Math.round(GAME.bossFunds * 0.18);
+          damageBoss(dmg);
+          injectTick(22);
+          spawnVfxExplosion('💥【倒戈卸甲】外資認錯', `-NT$ ${(dmg/10000).toFixed(0)}萬`, '#ff0033');
+          spawnCoinsRain(45);
+          SFX.squeeze();
+          addNews(`【倒戈卸甲】外資空單全線砍倉，空頭部隊潰不成軍，瞬間噴出長紅！`, 'bull');
         }
       },
       {
         id: 'cowos_expansion',
         name: 'CoWoS 產能全開',
+        idiom: '勢如破竹',
+        quote: '蒸蒸日上，無堅不摧',
+        theme: 'theme-violet',
+        cardType: 'buff',
+        typeLabel: '⚡ 產能倍增',
         enTitle: 'COWOS PACKAGING SURGE',
         issuer: '◆ 先進封裝廠啟動了翻倍量產',
         location: '📍 台中中科晶圓廠 · Taichung',
@@ -1952,44 +2198,54 @@
         desc: '先進封裝產能月月翻倍！每秒持續推升每股 3.0 元，持續 8 秒。',
         color: '#a855f7',
         action: () => {
-          spawnVfxExplosion('⚡ CoWoS 擴產', '8秒連續推升', '#a855f7');
+          spawnVfxExplosion('⚡【勢如破竹】CoWoS 擴產', '8秒連續推升', '#a855f7');
           SFX.pump();
           let count = 0;
           const timer = setInterval(() => {
             injectTick(3.0);
-            damageBoss(600000);
+            damageBoss(450000);
             count++;
             if (count >= 8) clearInterval(timer);
           }, 1000);
-          addNews('【產業快訊】台積電先進封裝產能全線滿載，CoWoS 供不應求推升獲利預期！', 'bull');
+          addNews('【勢如破竹】台積電先進封裝產能全開，獲利預期蒸蒸日上！', 'bull');
         }
       },
       {
-        id: 'short_squeeze',
-        name: '外資認錯回補',
-        enTitle: 'MASSIVE SHORT SQUEEZE',
-        issuer: '◆ 華爾街量化觸發了連環砍倉',
-        location: '📍 紐約高盛交易室 · New York',
-        actionTag: '連環軋空!!',
-        icon: '💥',
-        cost: 4,
-        rarity: 'legend',
-        rarityName: '傳奇 (LEGEND)',
-        desc: '空頭融券大踩踏！對手直接扣除 22% 資金池，並瞬間噴出長紅！',
-        color: '#ff4d6d',
+        id: 'w_bottom',
+        name: 'W 底雙底突破',
+        idiom: '乘勝追擊',
+        quote: '撥雲見日，勢不可擋',
+        theme: 'theme-azure',
+        cardType: 'tactics',
+        typeLabel: '📈 形態突破',
+        enTitle: 'DOUBLE BOTTOM BREAKOUT',
+        issuer: '◆ 華爾街技術派發動了頸線突破',
+        location: '📍 紐約華爾街 · Wall Street',
+        actionTag: '技術突破!!',
+        icon: '📈',
+        cost: 2,
+        rarity: 'epic',
+        rarityName: '史詩 (EPIC)',
+        desc: '雙底形態成形！突破頸線引發技術買盤，每股跳漲 +15 元！',
+        color: '#ffd166',
         action: () => {
-          const dmg = Math.round(GAME.bossFunds * 0.22);
-          damageBoss(dmg);
-          injectTick(25);
-          spawnVfxExplosion('💥 外資融券斷頭', `-NT$ ${(dmg/10000).toFixed(0)}萬`, '#ff0033');
-          spawnCoinsRain(45);
-          SFX.squeeze();
-          addNews(`【籌碼大戰】外資做空部位遭無情軋空，盤中觸發券商強制砍倉，直接噴出 +25 元！`, 'bull');
+          GAME.doubleBottomActive = true;
+          setTimeout(() => { GAME.doubleBottomActive = false; }, 12000);
+          injectTick(15);
+          damageBoss(3500000);
+          spawnVfxExplosion('📈【乘勝追擊】W 底突破', '+15.0 元', '#00f3ff');
+          SFX.pump();
+          addNews('【乘勝追擊】台積電 K 線如撥雲見日，強勢突破 W 底頸線暴漲！', 'bull');
         }
       },
       {
         id: 'fvg_magnet',
         name: 'FVG 缺口磁吸',
+        idiom: '順水推舟',
+        quote: '水到渠成，引火燎原',
+        theme: 'theme-azure',
+        cardType: 'tactics',
+        typeLabel: '🧲 引力回補',
         enTitle: 'FAIR VALUE GAP MAGNET',
         issuer: '◆ 演算法大單啟動了缺口回補',
         location: '📍 芝加哥商業交易所 · Chicago',
@@ -1998,19 +2254,24 @@
         cost: 2,
         rarity: 'common',
         rarityName: '普通 (COMMON)',
-        desc: '技術面仙人指路！觸發上方未補跳空缺口引力，迅速向上回補 12 元。',
+        desc: '技術面仙人指路！觸發跳空缺口引力，向上回補 12 元。',
         color: '#00f3ff',
         action: () => {
           injectTick(12);
           damageBoss(2000000);
-          spawnVfxExplosion('🧲 缺口引力回補', '+12.0 元', '#00f3ff');
+          spawnVfxExplosion('🧲【順水推舟】缺口回補', '+12.0 元', '#00f3ff');
           SFX.pump();
-          addNews('【技術分析】台積電跳空回補前波 FVG 價值缺口，空頭防線全面瓦解！', 'bull');
+          addNews('【順水推舟】台積電回補前波 FVG 缺口，水到渠成直搗空頭防線！', 'bull');
         }
       },
       {
         id: 'insurance_shield',
         name: '止損保險救援',
+        idiom: '絕處逢生',
+        quote: '化險為夷，轉危為安',
+        theme: 'theme-emerald',
+        cardType: 'defense',
+        typeLabel: '🛡️ 避險回春',
         enTitle: 'STOP-LOSS INSURANCE',
         issuer: '◆ 國際再保集團啟動了緊急賠付',
         location: '📍 瑞士蘇黎世 · Zurich',
@@ -2019,9 +2280,13 @@
         cost: 2,
         rarity: 'rare',
         rarityName: '稀有 (RARE)',
-        desc: '緊急救命卡！若當前部位虧損，立即攔截 70% 虧損並補回保證金！',
-        color: '#00e676',
+        desc: '急救保險！若部位虧損挽回 70%，且主力防爆盾充能 +1 層！',
+        color: '#10b981',
         action: () => {
+          if (GAME.antiLiqShields < GAME.maxAntiLiqShields) {
+            GAME.antiLiqShields++;
+            updateUI();
+          }
           if (GAME.position) {
             const p = GAME.position;
             const priceDiff = GAME.currentPrice - p.entryPrice;
@@ -2029,11 +2294,136 @@
             if (pnl < 0) {
               const saved = Math.abs(pnl) * 0.7;
               GAME.playerFunds += Math.round(saved);
-              spawnVfxExplosion('🛡️ 保險救援', `挽回 70% 虧損`, '#00e676');
+              spawnVfxExplosion('🛡️【絕處逢生】保險救援', `挽回 NT$ ${Math.round(saved).toLocaleString()}`, '#10b981');
               SFX.victory();
-              addNews(`【保險救援成功】止損保險機制生效，攔截虧損 NT$ ${Math.round(saved).toLocaleString()}！`, 'bull');
+              addNews(`【絕處逢生】化險為夷！止損保險挽回 70% 虧損，防爆金身 +1！`, 'bull');
+              return;
             }
           }
+          spawnVfxExplosion('🛡️【絕處逢生】防爆充能', '防爆盾 +1 層', '#10b981');
+          SFX.cash();
+          addNews('【絕處逢生】未雨綢繆！防爆金身護盾成功充能 +1 層！', 'bull');
+        }
+      },
+      {
+        id: 'buyback_shield',
+        name: '庫藏股緊急買回',
+        idiom: '金蟬脫殼',
+        quote: '扭轉乾坤，安如泰山',
+        theme: 'theme-emerald',
+        cardType: 'defense',
+        typeLabel: '🛡️ 巨資托底',
+        enTitle: 'SHARE BUYBACK FORTRESS',
+        issuer: '◆ 台積電董事會啟動千億庫藏股',
+        location: '📍 新竹科學園區 · Hsinchu',
+        actionTag: '金蟬脫殼!!',
+        icon: '🏦',
+        cost: 3,
+        rarity: 'legend',
+        rarityName: '傳奇 (LEGEND)',
+        desc: '董事會千億庫藏股托底！直接補滿防爆盾(3/3)，拉抬 +16 元，免疫砸盤 8 秒！',
+        color: '#10b981',
+        action: () => {
+          GAME.antiLiqShields = GAME.maxAntiLiqShields;
+          GAME.shieldActive = true;
+          setTimeout(() => { GAME.shieldActive = false; }, 8000);
+          injectTick(16);
+          damageBoss(3500000);
+          updateUI();
+          spawnVfxExplosion('🏦【金蟬脫殼】庫藏股托底', '+16元 / 防爆盾補滿', '#10b981');
+          SFX.cash();
+          addNews('【金蟬脫殼】台積電董事會狂掃庫藏股，主力防爆盾全數補滿，固若金湯！', 'bull');
+        }
+      },
+      {
+        id: 'retail_solidarity',
+        name: '散戶百萬大團結',
+        idiom: '眾志成城',
+        quote: '聚沙成塔，萬眾一心',
+        theme: 'theme-prism',
+        cardType: 'ultimate',
+        typeLabel: '🌟 萬民歸心',
+        enTitle: 'RETAIL ARMY UNITED',
+        issuer: '◆ 全台百萬股民發動了螞蟻雄兵',
+        location: '📍 台灣全島證券商 · Taiwan',
+        actionTag: '眾志成城!!',
+        icon: '🐜',
+        cost: 4,
+        rarity: 'legend',
+        rarityName: '神話 (MYTHIC)',
+        desc: '螞蟻雄兵大團結！扣除外資 15% 資金，且每秒持續推升 2.5 元持續 10 秒！',
+        color: '#ec4899',
+        action: () => {
+          const dmg = Math.round(GAME.bossFunds * 0.15);
+          damageBoss(dmg);
+          spawnVfxExplosion('🐜【眾志成城】百萬散戶', `-NT$ ${(dmg/10000).toFixed(0)}萬`, '#ec4899');
+          spawnCoinsRain(35);
+          SFX.pump();
+          let c = 0;
+          const t = setInterval(() => {
+            injectTick(2.5);
+            c++;
+            if (c >= 10) clearInterval(t);
+          }, 1000);
+          addNews('【眾志成城】聚沙成塔！百萬散戶零股大軍全面包圍外資空頭！', 'bull');
+        }
+      },
+      {
+        id: 'euv_laser',
+        name: 'EUV 晶圓極光炮',
+        idiom: '氣吞山河',
+        quote: '長虹貫日，所向披靡',
+        theme: 'theme-prism',
+        cardType: 'ultimate',
+        typeLabel: '🌟 極光滅殺',
+        enTitle: 'EUV WAFER AURORA CANNON',
+        issuer: '◆ 艾司摩爾高數值孔徑 EUV 極紫外光蓄力',
+        location: '📍 荷蘭維爾德霍芬 · Veldhoven',
+        actionTag: '氣吞山河!!',
+        icon: '⚡',
+        cost: 5,
+        rarity: 'legend',
+        rarityName: '神話 (MYTHIC)',
+        desc: '0.55 NA 高孔徑極光充能！直扣對手 900 萬資金，每股長紅暴漲 +30 元！',
+        color: '#c084fc',
+        action: () => {
+          injectTick(30);
+          damageBoss(9000000);
+          spawnVfxExplosion('⚡【氣吞山河】EUV 極光炮', '+30.0 元 / 轟擊 900 萬', '#c084fc');
+          spawnCoinsRain(50);
+          SFX.cinematicHit();
+          addNews('【氣吞山河】長虹貫日！先進製程極紫外光直接貫穿空頭心臟！', 'bull');
+        }
+      },
+      {
+        id: 'volume_breakout',
+        name: '量價共振長紅',
+        idiom: '如虎添翼',
+        quote: '錦上添花，一日千里',
+        theme: 'theme-azure',
+        cardType: 'buff',
+        typeLabel: '📈 狂瀾推升',
+        enTitle: 'VOLUME & PRICE SURGE',
+        issuer: '◆ 三大法人同步翻多買超',
+        location: '📍 台灣證券交易所 · Taipei',
+        actionTag: '如虎添翼!!',
+        icon: '🐯',
+        cost: 3,
+        rarity: 'rare',
+        rarityName: '稀有 (RARE)',
+        desc: '內外資共振！多頭推力 +150%，持續 12 秒，每秒穩健墊高 1.5 元！',
+        color: '#00f3ff',
+        action: () => {
+          GAME.speedBoostUntil = Date.now() + 12000;
+          spawnVfxExplosion('🐯【如虎添翼】量價齊揚', '多頭推力 +150%', '#00f3ff');
+          SFX.pump();
+          let cnt = 0;
+          const tmr = setInterval(() => {
+            injectTick(1.5);
+            cnt++;
+            if (cnt >= 12) clearInterval(tmr);
+          }, 1000);
+          addNews('【如虎添翼】多頭大軍錦上添花，成交量暴增一日千里！', 'bull');
         }
       }
     ];
@@ -3051,14 +3441,14 @@
       const enTitleEl = document.getElementById('bannerEnTitle');
       const locEl = document.getElementById('bannerLocationTag');
 
-      // 填入卡牌資料
-      actionText.textContent = card.actionTag || '多頭突擊!!';
+      // 填入卡牌資料 (成語印章與修飾)
+      actionText.innerHTML = card.idiom ? `【${card.idiom}】· ${card.actionTag || '多頭突擊!!'}` : (card.actionTag || '多頭突擊!!');
       cardIcon.textContent = card.icon || '🚀';
-      cardName.textContent = card.name || '世界級指令';
+      cardName.innerHTML = card.idiom ? `【${card.idiom}】<br>${card.name}` : (card.name || '世界級指令');
       avatarEl.textContent = card.icon || '🐶';
-      issuerEl.innerHTML = `<span class="diamond-sparkle">◆</span> ${issuerText || card.issuer || '玩家發動了世界層級'}`;
-      titleEl.textContent = card.name;
-      enTitleEl.textContent = card.enTitle || 'MARKET IMPACT';
+      issuerEl.innerHTML = `<span class="diamond-sparkle">◆</span> ${issuerText || card.issuer || '護國主力發動了核心指令'}`;
+      titleEl.innerHTML = card.idiom ? `<span class="banner-idiom-stamp">【${card.idiom}】</span> ${card.name}` : card.name;
+      enTitleEl.textContent = card.quote ? `「${card.quote}」 · ${card.enTitle || 'MARKET IMPACT'}` : (card.enTitle || 'MARKET IMPACT');
       locEl.innerHTML = `<span>📍</span> ${card.location || '全球市場中心'}`;
 
       // 樣式調整 (多/空色彩)
@@ -3323,22 +3713,22 @@
       const roll = Math.random();
 
       if (roll < 0.28) {
-        // 空頭突擊砸盤
-        const dump = Math.floor(Math.random() * 8) + 4;
+        // 空頭突擊摜壓
+        const dump = Math.floor(Math.random() * 7) + 3;
         if (!GAME.shieldActive) {
           injectTick(-dump);
           SFX.dump();
-          addNews(`【外資狙擊】高盛量化單大筆摜壓五檔，每股急殺 -${dump} 元！`, 'bad');
+          addNews(`【外資賣壓】高盛量化單大筆摜壓五檔，每股急跌 -${dump} 元！`, 'bad');
         } else {
-          addNews(`【防護罩生效】國安基金托底成功，阻擋外資 -${dump} 元砸盤！`, 'bull');
+          addNews(`【護盤生效】國安基金護盤托底生效，抵禦外資 -${dump} 元賣壓！`, 'bull');
         }
       } else if (roll < 0.42 && GAME.position && GAME.position.type === 'LONG') {
-        // 誘多洗盤 / 獵殺散戶多頭
-        const hunt = Math.floor(Math.random() * 10) + 6;
+        // 盤中借券洗盤
+        const hunt = Math.floor(Math.random() * 8) + 4;
         if (!GAME.shieldActive) {
           injectTick(-hunt);
           SFX.dump();
-          addNews(`【洗盤獵殺】主力誘導突破後急殺洗盤 -${hunt} 元，清理浮額！`, 'bad');
+          addNews(`【盤中震盪】外資借券擴大賣壓 -${hunt} 元，引發市場多頭清洗浮額！`, 'bad');
         }
       }
     }, 4000);
@@ -3353,29 +3743,32 @@
       SFX.click();
     }
 
+    function calcSafeLiqPrice(type, entryPrice, leverage) {
+      // 國安基金專戶巨額信用額度與超寬維持保證金體系：杜絕輕易爆倉
+      const bufferFactor = Math.max(0.12, +(0.96 / (leverage * 0.28 + 0.72)).toFixed(3));
+      if (type === 'LONG') {
+        return Math.max(10.0, +(entryPrice * (1 - bufferFactor)).toFixed(2));
+      } else {
+        return +(entryPrice * (1 + bufferFactor)).toFixed(2);
+      }
+    }
+
     function openPosition(type) {
       if (GAME.position) {
-        alert('已有持倉！請使用下方的「加碼」或「減碼」功能！');
+        alert('已有持倉部位！請使用下方的「加碼」或「調節」功能！');
         return;
       }
 
       const marginToUse = GAME.playerFunds * 0.35;
       if (marginToUse <= 0) {
-        alert('資金不足！');
+        alert('專戶可用保證金不足！');
         return;
       }
 
       const totalExposure = marginToUse * GAME.leverage;
       const sharePrice = GAME.currentPrice;
       const units = Math.max(10, Math.floor(totalExposure / sharePrice));
-
-      const maxLossMargin = marginToUse * 0.85;
-      let liqPrice = 0;
-      if (type === 'LONG') {
-        liqPrice = +(sharePrice - (maxLossMargin / units)).toFixed(2);
-      } else {
-        liqPrice = +(sharePrice + (maxLossMargin / units)).toFixed(2);
-      }
+      const liqPrice = calcSafeLiqPrice(type, sharePrice, GAME.leverage);
 
       GAME.position = {
         type,
@@ -3383,15 +3776,15 @@
         units,
         marginUsed: marginToUse,
         leverage: GAME.leverage,
-        liqPrice: Math.max(0, liqPrice)
+        liqPrice
       };
 
       if (type === 'LONG') {
         SFX.pump();
-        addNews(`【建立多倉】以均價 NT$ ${sharePrice} 買進 ${units.toLocaleString()} 股台積電ADR (TSM)！`, 'bull');
+        addNews(`【多頭建倉】國安基金以均價 NT$ ${sharePrice} 融資買進 ${units.toLocaleString()} 股台積電ADR，維持擔保強平價設於 NT$ ${liqPrice}`, 'bull');
       } else {
         SFX.dump();
-        addNews(`【建立空倉】以均價 NT$ ${sharePrice} 融券做空 ${units.toLocaleString()} 股台積電ADR (TSM)！`, 'bad');
+        addNews(`【空頭建倉】國安基金以均價 NT$ ${sharePrice} 融券賣出 ${units.toLocaleString()} 股台積電ADR，維持擔保強平價設於 NT$ ${liqPrice}`, 'bad');
       }
 
       updateUI();
@@ -3415,17 +3808,10 @@
       p.units = totalUnits;
       p.entryPrice = newEntryPrice;
       p.marginUsed += requiredMargin;
-
-      const maxLossMargin = p.marginUsed * 0.85;
-      if (p.type === 'LONG') {
-        p.liqPrice = +(newEntryPrice - (maxLossMargin / totalUnits)).toFixed(2);
-      } else {
-        p.liqPrice = +(newEntryPrice + (maxLossMargin / totalUnits)).toFixed(2);
-      }
-      p.liqPrice = Math.max(0, p.liqPrice);
+      p.liqPrice = calcSafeLiqPrice(p.type, newEntryPrice, p.leverage);
 
       SFX.cash();
-      addNews(`【加碼追擊】加碼 ${extraShares.toLocaleString()} 股！持倉達 ${totalUnits.toLocaleString()} 股，新持倉均價 NT$ ${newEntryPrice}！`, 'bull');
+      addNews(`【部位加碼】加碼買進 ${extraShares.toLocaleString()} 股！累計持倉 ${totalUnits.toLocaleString()} 股，持倉均價 NT$ ${newEntryPrice}，強平價重置為 NT$ ${p.liqPrice}`, 'bull');
       updateUI();
     }
 
@@ -3454,7 +3840,7 @@
 
       const isProfit = realizedPnl >= 0;
       SFX.cash();
-      addNews(`【獲利落袋】減碼 ${trimUnits.toLocaleString()} 股，實現損益 NT$ ${Math.round(realizedPnl).toLocaleString()}！剩餘 ${remainingUnits.toLocaleString()} 股。`, isProfit ? 'bull' : 'bad');
+      addNews(`【調節減碼】減碼調節 ${trimUnits.toLocaleString()} 股，實現損益 NT$ ${Math.round(realizedPnl).toLocaleString()}！剩餘持倉 ${remainingUnits.toLocaleString()} 股`, isProfit ? 'bull' : 'bad');
       updateUI();
     }
 
@@ -3485,7 +3871,7 @@
       if (isProfit) SFX.victory();
       else SFX.dump();
 
-      addNews(`【全數平倉】台積電ADR平倉，實現總損益 ${totalPnl >= 0 ? '+' : ''}${Math.round(totalPnl).toLocaleString()} 元！`, isProfit ? 'bull' : 'bad');
+      addNews(`【全數平倉】部位全數市價平倉結算，實現總損益 ${totalPnl >= 0 ? '+' : ''}${Math.round(totalPnl).toLocaleString()} 元！`, isProfit ? 'bull' : 'bad');
       GAME.position = null;
       updateUI();
     }
@@ -3498,11 +3884,38 @@
       if (p.type === 'SHORT' && GAME.currentPrice >= p.liqPrice) isLiquidated = true;
 
       if (isLiquidated) {
-        const loss = p.marginUsed;
-        GAME.playerFunds = Math.max(0, Math.round(GAME.playerFunds - loss));
+        // 國安基金政策性托底保護體系：若有護盤額度，絕不輕易爆倉
+        if (GAME.antiLiqShields > 0) {
+          GAME.antiLiqShields--;
+          SFX.cash();
+          SFX.victory();
+          spawnVfxExplosion('🛡️ 國安基金緊急護盤', '專戶資金政策性托底注資！', '#10b981');
+          addNews(`【國安基金緊急護盤】部位觸及維持擔保警戒線！啟動專戶巨額資金緊急注資托底，重置持倉均價至市價 NT$ ${GAME.currentPrice}，成功化解違約強平風險！(剩餘護盤額度: ${GAME.antiLiqShields} 次)`, 'bull');
+          
+          // 重新校準均價為市價，重新計算安全防爆線，賦予新生
+          p.entryPrice = GAME.currentPrice;
+          p.liqPrice = calcSafeLiqPrice(p.type, p.entryPrice, p.leverage);
+          
+          // 獲得 10 秒免疫賣壓護罩
+          GAME.shieldActive = true;
+          setTimeout(() => { GAME.shieldActive = false; }, 10000);
+          updateUI();
+          return;
+        }
+
+        // 若護盤次數耗盡，執行「風控強制減碼」，僅調節 35% 釋放保證金，絕不全額砍倉！
+        const cutFraction = 0.35;
+        const loss = p.marginUsed * cutFraction;
+        GAME.playerFunds = Math.max(100000, Math.round(GAME.playerFunds - loss));
+        p.marginUsed *= (1 - cutFraction);
+        p.units = Math.max(10, Math.floor(p.units * (1 - cutFraction)));
+        p.entryPrice = GAME.currentPrice;
+        p.liqPrice = calcSafeLiqPrice(p.type, p.entryPrice, p.leverage);
+
         SFX.liquidate();
-        addNews(`【爆倉斷頭】保證金不足，遭強制砍倉！損失 NT$ ${Math.round(loss).toLocaleString()}`, 'bad');
-        GAME.position = null;
+        spawnVfxExplosion('⚠️ 風控強制減碼', '智慧減碼 35% 釋放保證金', '#f59e0b');
+        addNews(`【風控強制減碼】觸發風控機制，自動減碼調節 35% 部位釋放保證金，保全專戶主力本金！`, 'bad');
+        updateUI();
       }
     }
 
@@ -3576,16 +3989,27 @@
       container.innerHTML = '';
       GAME.hand.forEach(c => {
         const div = document.createElement('div');
-        div.className = `skill-card ${GAME.energy < c.cost ? 'cost-disabled' : ''}`;
+        div.className = `skill-card ${c.theme || 'theme-gold'} ${GAME.energy < c.cost ? 'cost-disabled' : ''}`;
         div.onclick = (e) => playCard(c.uid, div);
         div.innerHTML = `
-          <div class="card-cost">${c.cost}</div>
           <div>
-            <div class="card-icon">${c.icon}</div>
+            <div class="card-top-row">
+              <span class="card-idiom-badge">【${c.idiom || '神機妙算'}】</span>
+              <div class="card-cost">${c.cost}</div>
+            </div>
+            <div class="card-icon-line">
+              <span class="card-icon">${c.icon}</span>
+              <span class="card-type-tag">${c.typeLabel || '⚔️ 突擊'}</span>
+            </div>
             <div class="card-name">${c.name}</div>
-            <span class="card-rarity rarity-${c.rarity}">${c.rarityName}</span>
+            <div class="card-quote">「${c.quote || '運籌帷幄，決勝千里'}」</div>
           </div>
-          <div class="card-desc">${c.desc}</div>
+          <div>
+            <div style="text-align:center;">
+              <span class="card-rarity rarity-${c.rarity}">${c.rarityName}</span>
+            </div>
+            <div class="card-desc">${c.desc}</div>
+          </div>
         `;
         container.appendChild(div);
       });
@@ -3722,7 +4146,7 @@
         const pnlPct = (pnl / p.marginUsed) * 100;
         const isProfit = pnl >= 0;
 
-        posUnitsVal.textContent = `${p.type === 'LONG' ? '做多' : '做空'} ${p.units.toLocaleString()} 股 (${p.leverage}x)`;
+        posUnitsVal.textContent = `${p.type === 'LONG' ? '融資買進 (多)' : '融券賣出 (空)'} ${p.units.toLocaleString()} 股 (${p.leverage}x)`;
         posUnitsVal.style.color = p.type === 'LONG' ? 'var(--bull-red)' : 'var(--bear-green)';
         posEntryVal.textContent = `NT$ ${p.entryPrice}`;
         posPnlVal.textContent = `${isProfit ? '+' : ''}${Math.round(pnl).toLocaleString()} (${isProfit ? '+' : ''}${pnlPct.toFixed(1)}%)`;
@@ -3731,6 +4155,13 @@
 
         noPosBtns.style.display = 'none';
         posActiveActions.style.display = 'grid';
+      }
+
+      // 更新國安基金護盤托底額度
+      const shieldEl = document.getElementById('posShieldVal');
+      if (shieldEl) {
+        shieldEl.textContent = `🛡️ ${GAME.antiLiqShields}/${GAME.maxAntiLiqShields} 次緊急托底`;
+        shieldEl.style.color = GAME.antiLiqShields > 1 ? '#10b981' : (GAME.antiLiqShields === 1 ? '#f59e0b' : '#ef4444');
       }
     }
 
