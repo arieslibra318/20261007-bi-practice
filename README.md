@@ -53,6 +53,12 @@
 
 ```
 .
+├── QTE棒球遊戲/                           # ⚾ 獨立部署資料夾 (最外層 index.html + 影片，符合 GitHub Pages 指引)
+│   ├── index.html                        # 棒球遊戲主程式
+│   ├── assets/                           # 遊戲過場影片資源
+│   ├── baseball_8bit_stage1_female_7s.mp4
+│   ├── baseball_8bit_stage2_female_7s.mp4
+│   └── baseball_8bit_stage3_grandslam_7s.mp4
 ├── baseball_game.html                     # ⚾ 8-Bit 像素棒球遊戲主程式
 ├── baseball_8bit_stage1_female_7s.mp4    # 關卡一：3:2 滿壘逆轉安打過場影片
 ├── baseball_8bit_stage2_female_7s.mp4    # 關卡二：4:3 追平二壘安打過場影片

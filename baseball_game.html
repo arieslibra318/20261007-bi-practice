@@ -3418,6 +3418,11 @@
         subBox.innerHTML = '▶【8-BIT 瞄準】盯緊外角卡特球，順勢推打！';
       }
 
+      video.onerror = () => {
+        if (!video.src.includes('assets/')) {
+          video.src = 'assets/' + videoSrc;
+        }
+      };
       video.src = videoSrc;
       video.currentTime = 0;
       modal.classList.add('show');
