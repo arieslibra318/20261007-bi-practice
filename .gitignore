@@ -29,12 +29,12 @@ s2_*.png
 s3_*.png
 *.tmp
 
-# Other non-deliverable test videos
-baseball_8bit_female_7s.mp4
-baseball_8bit_stage1_seedance_7s.mp4
-baseball_seedance_raw_7s.mp4
-baseball_stage2_seedance_raw_7s.mp4
-baseball_stage3_seedance_raw_7s.mp4
+# QTE 棒球遊戲（獨立專案移至 arieslibra318/qte-baseball-game）
+QTE棒球遊戲/
+baseball_*
+棒球遊戲*
+
+# Other non-deliverable test videos & scratch files
 happy_halloween_30s.mp4
 huashu_*
 human_voice_15s.mp4

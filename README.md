@@ -1,14 +1,12 @@
-# 國立臺中科技大學 商業智慧與多媒體互動實作專案 (BI & Interactive Applications)
+# 《護國神山：台積電ADR (TSM) 守護戰》 Cyber Trading Arena
 
-> 作者：[@arieslibra318](https://github.com/arieslibra318)  
-> 線上體驗與展示：
-> - 📈 **《護國神山：台積電ADR (TSM) 守護戰》**：[線上試玩 (Netlify)](https://tsmc-adr-battle-arena.netlify.app)
-> - 🐱 **貓咪日常健康與預防醫學指南 PPT**：[網頁簡報展示](https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/)
-> - 📊 **台中市外送員交通事故數據分析儀表板**：[`dashboard.html`](dashboard.html)
+> 國立臺中科技大學 資訊管理系 / 研究所 商業智慧課程課堂實作專案  
+> 線上試玩展示：[https://tsmc-adr-battle-arena.netlify.app](https://tsmc-adr-battle-arena.netlify.app)  
+> 相關獨立專案：[⚾ 8-Bit 像素棒球節奏 QTE 遊戲](https://github.com/arieslibra318/qte-baseball-game)
 
 ---
 
-## 專案一：📈《護國神山：台積電ADR (TSM) 守護戰》 Cyber Trading Arena
+## 專案簡介 (Introduction)
 
 本專案是以**台灣半導體權值王「台積電 ADR (TSM)」美股即時行情為背景**所打造的 Web 卡牌對抗對決與即時走勢圖互動系統。
 
@@ -23,25 +21,36 @@
 
 ---
 
-## 專案目錄結構 (Project Structure)
+## 專案架構 (Project Structure)
 
 ```
-├── index.html                             # 📈 台積電 ADR 守護戰首頁 / 完整對戰遊戲入口
-├── tsmc_battle_game.html                  # 遊戲原始獨立檔案
-├── dashboard.html                         # 📊 台中市外送員交通事故數據分析儀表板
-├── cat-healthcare-ppt/                    # 🐱 貓咪日常健康與預防醫學指南網頁 PPT
-└── README.md                              # 專案說明文件
+.
+├── index.html            # 專案首頁 / 完整對戰遊戲入口 (包含完整 K 線引擎、卡牌系統與 3D 視覺)
+├── tsmc_battle_game.html # 遊戲原始獨立檔案
+├── dashboard.html        # 台中市外送員交通事故數據分析儀表板 (2022-2026)
+├── cat-healthcare-ppt/   # 🐱 貓咪日常健康與預防醫學指南網頁 PPT
+└── README.md             # 專案說明文件
 ```
+
+---
+
+## 網頁簡報展示 (Interactive Web Slide Decks)
+
+基於 `guizang-ppt-skill` 生成的單文件橫向翻頁高階雜誌風格 PPT：
+
+- **🐱 貓咪日常健康與預防醫學指南 PPT**
+  - **主題**: 從演化天性到預防醫學的日常照護指南（風格 A · 森林墨）
+  - **線上展示**: [https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/](https://arieslibra318.github.io/20261007-bi-practice/cat-healthcare-ppt/)
+  - **特點**: 10 頁雜誌風格、FGS 痛覺表情量表五聯徵、雙軌流水線動效。
 
 ---
 
 ## 快速啟動 (Quick Start)
 
-本專案所有遊戲與頁面皆為零外部重型套件依賴的純前端 Single Page Application (SPA)，支援任意現代瀏覽器：
+本專案為零外部套件依賴的純前端 Single Page Application (SPA)，支援任意現代瀏覽器：
 
 ### 方法一：直接本機開啟
-直接以瀏覽器雙擊點開：
-- `index.html` 暢玩台積電 ADR 守護戰
+直接雙擊點開 `index.html`，即可於 Chrome、Edge、Safari 或 Firefox 中暢玩。
 
 ### 方法二：透過本機 HTTP 伺服器
 ```bash
@@ -50,12 +59,14 @@ python -m http.server 8000
 
 # 或使用 Node.js npx serve
 npx serve .
+```
+開啟瀏覽器前往 `http://localhost:8000` 即可。
 
 ---
 
 ## 技術棧 (Tech Stack)
 
-* **Core**: Vanilla JavaScript (ES6+), HTML5 Canvas 2D / 3D, HTML5 Video API
-* **Styling**: Tailwind CSS CDN, Retro 8-Bit Pixel Art CSS, Cyberpunk Dark UI Design
-* **Audio**: Web Audio API (免載入外部音訊套件，原生振盪器合成音頻)
-* **Deployment**: GitHub Pages / Netlify
+* **Core**: Vanilla JavaScript (ES6+), HTML5 Canvas 2D / 3D
+* **Styling**: Tailwind CSS CDN, Cyberpunk Dark UI Design
+* **Audio**: Web Audio API (免載入外部音效檔，原生合成音頻)
+* **Deployment**: Netlify / GitHub Pages
